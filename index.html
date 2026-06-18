@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高敏感人格测试 HSP-R</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif; background: #f2f0f8; min-height: 100vh; color: #333; }
+  .header { background: linear-gradient(135deg, #6a5acd 0%, #9b88e8 100%); padding: 36px 20px 28px; text-align: center; color: white; }
+  .header-wave { font-size: 36px; margin-bottom: 10px; display: block; animation: float 3s ease-in-out infinite; }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  .header h1 { font-size: 20px; font-weight: 700; }
+  .header p { font-size: 13px; opacity: 0.85; margin-top: 6px; line-height: 1.6; }
+  .container { max-width: 560px; margin: 0 auto; padding: 16px; }
+  .progress-wrap { background: white; border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; }
+  .progress-top { display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-bottom: 8px; }
+  .progress-bar { background: #e8e4f8; border-radius: 6px; height: 8px; }
+  .progress-fill { background: linear-gradient(90deg, #6a5acd, #9b88e8); border-radius: 6px; height: 8px; transition: width 0.4s ease; }
+  .legend { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; margin: 4px 2px 0; }
+  .question-card { background: white; border-radius: 14px; padding: 18px 16px; margin-bottom: 12px; transition: box-shadow 0.2s; }
+  .question-card.answered { box-shadow: 0 0 0 2px #6a5acd44; }
+  .q-num { font-size: 11px; color: #b0a8d8; font-weight: 600; margin-bottom: 6px; }
+  .q-text { font-size: 14px; color: #333; line-height: 1.65; margin-bottom: 14px; }
+  .scale-row { display: flex; gap: 5px; }
+  .scale-btn { flex: 1; padding: 10px 0; border-radius: 8px; border: 2px solid #e8e4f8; background: white; color: #777; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
+  .scale-btn:active { transform: scale(0.93); }
+  .scale-btn.selected { border-color: #6a5acd; background: #6a5acd; color: white; font-weight: 700; }
+  .submit-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 6px; margin-bottom: 30px; }
+  .submit-btn.ready { background: linear-gradient(135deg, #6a5acd, #9b88e8); color: white; }
+  .submit-btn.ready:active { transform: scale(0.98); }
+  .submit-btn.disabled { background: #d8d4e8; color: #aaa; cursor: not-allowed; }
+  #result-section { display: none; }
+  .score-card { background: white; border-radius: 16px; padding: 28px 20px; text-align: center; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(106,90,205,0.12); }
+  .score-emoji { font-size: 44px; margin-bottom: 10px; display: block; }
+  .score-label { font-size: 13px; color: #aaa; margin-bottom: 6px; }
+  .score-num { font-size: 60px; font-weight: 800; line-height: 1; }
+  .score-max { font-size: 12px; color: #bbb; margin: 4px 0 12px; }
+  .score-tag { display: inline-block; padding: 7px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+  .score-note { font-size: 12px; color: #999; line-height: 1.7; }
+  .sub-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+  .sub-card h2 { font-size: 15px; color: #6a5acd; font-weight: 700; margin-bottom: 18px; }
+  .sub-item { margin-bottom: 16px; }
+  .sub-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+  .sub-name { font-size: 14px; font-weight: 600; color: #333; }
+  .sub-desc { font-size: 11px; color: #bbb; margin-left: 6px; }
+  .sub-score { font-size: 16px; font-weight: 800; }
+  .sub-bar-bg { background: #f0eef8; border-radius: 6px; height: 10px; }
+  .sub-bar-fill { border-radius: 6px; height: 10px; transition: width 0.6s ease; }
+  .tip-card { background: #fef9e8; border-radius: 12px; padding: 14px 16px; font-size: 13px; color: #7a6830; line-height: 1.7; margin-bottom: 16px; }
+  .retry-btn { width: 100%; padding: 14px; background: white; color: #6a5acd; border: 2px solid #6a5acd; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 30px; }
+  .footer { text-align: center; font-size: 11px; color: #ccc; padding-bottom: 20px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <span class="header-wave">🌊</span>
+  <h1>高敏感人格测试 HSP-R</h1>
+  <p>对以下18个问题打分<br><strong>1 = 完全不符合</strong>　<strong>7 = 非常符合</strong></p>
+</div>
+<div class="container">
+  <div id="test-section">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span id="progress-text">已完成 0 / 18 题</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div id="questions-container"></div>
+    <button class="submit-btn disabled" id="submit-btn" onclick="showResults()" disabled>还有 18 题未完成</button>
+  </div>
+  <div id="result-section">
+    <div class="score-card">
+      <span class="score-emoji" id="res-emoji">✨</span>
+      <div class="score-label">你的总体平均分</div>
+      <div class="score-num" id="res-avg" style="color:#6a5acd"></div>
+      <div class="score-max">满分 7 分</div>
+      <span class="score-tag" id="res-tag"></span>
+      <div class="score-note">平均分 >5 倾向于高敏感。但分数不代表诊断，<br>只是帮你了解自己在敏感性谱系上的位置。</div>
+    </div>
+    <div class="sub-card">
+      <h2>六个维度详细得分</h2>
+      <div id="sub-scores"></div>
+    </div>
+    <div class="tip-card">💡 <strong>记住：</strong>高敏感不是心理问题，是神经系统天生处理信息更细致的方式。</div>
+    <button class="retry-btn" onclick="resetTest()">重新测试</button>
+    <div class="footer">量表来源：HSP-R © Pluess, Aron et al. (2024)</div>
+  </div>
+</div>
+<script>
+const questions=[{id:1,text:"你会注意到周围的东西是否被移动过吗？",sub:"details"},{id:2,text:"你容易受到他人反馈的影响（无论是正面还是负面的）吗？",sub:"emotional"},{id:3,text:"强烈的光线、浓烈的气味、粗糙的布料或附近的警报声，是否容易让你感到不适？",sub:"overstim"},{id:4,text:"你能轻易察觉到他人的感受吗？",sub:"social"},{id:5,text:"你会注意并享受细腻的气味、味道、声音或艺术作品吗？",sub:"positive"},{id:6,text:"你容易受到周围人情绪的影响吗？",sub:"emotional"},{id:7,text:"你倾向于对事情进行深入思考吗？",sub:"depth"},{id:8,text:"你擅长预判某人对某件事可能有什么样的感受吗？",sub:"social"},{id:9,text:"强烈的刺激（如巨大的噪音或混乱的场面）会让你感到困扰吗？",sub:"overstim"},{id:10,text:"无论你是否表现出来，你通常对自己的经历有强烈的内心感受吗？",sub:"emotional"},{id:11,text:"别人是否告诉你，你很擅长理解他们的感受或想法？",sub:"social"},{id:12,text:"你容易深深沉浸在音乐中吗？",sub:"positive"},{id:13,text:"你会思考一些哲学性的问题吗？",sub:"depth"},{id:14,text:"你是否比其他人更能察觉到天气的变化？",sub:"details"},{id:15,text:"当周围同时发生很多事情时，你会感到不舒服或烦躁吗？",sub:"overstim"},{id:16,text:"你会被艺术或音乐深深打动吗？",sub:"positive"},{id:17,text:"你倾向于留意到季节交替的细微迹象（如从冬到春的变化等）吗？",sub:"details"},{id:18,text:"你喜欢进行深入的交流和对话吗？",sub:"depth"}];
+const subscales={overstim:{name:"过度刺激敏感",desc:"对强烈外部刺激的敏感程度",qs:[3,9,15],color:"#7c6bbf"},positive:{name:"正面体验敏感",desc:"对美好事物的感知与享受能力",qs:[5,12,16],color:"#9b88e8"},social:{name:"社交敏感",desc:"对他人情绪与想法的觉察能力",qs:[4,8,11],color:"#6a5acd"},depth:{name:"深度思考",desc:"倾向于深入处理信息与想法",qs:[7,13,18],color:"#8875d8"},emotional:{name:"情绪反应",desc:"对情绪刺激的内在反应强度",qs:[2,6,10],color:"#7060c8"},details:{name:"细节敏感",desc:"对环境细微变化的察觉能力",qs:[1,14,17],color:"#a090e0"}};
+const answers={};
+const container=document.getElementById('questions-container');
+questions.forEach(q=>{
+  const card=document.createElement('div');
+  card.className='question-card';card.id='card-'+q.id;
+  const btns=[1,2,3,4,5,6,7].map(v=>`<button class="scale-btn" onclick="answer(${q.id},${v},this)">${v}</button>`).join('');
+  card.innerHTML=`<div class="q-num">Q${q.id}</div><div class="q-text">${q.text}</div><div class="scale-row">${btns}</div><div class="legend"><span>完全不符合</span><span>非常符合</span></div>`;
+  container.appendChild(card);
+});
+function answer(qId,val,btn){
+  answers[qId]=val;
+  const card=document.getElementById('card-'+qId);
+  card.classList.add('answered');
+  card.querySelectorAll('.scale-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');updateProgress();
+}
+function updateProgress(){
+  const done=Object.keys(answers).length,total=questions.length,pct=Math.round(done/total*100);
+  document.getElementById('progress-text').textContent=`已完成 ${done} / ${total} 题`;
+  document.getElementById('progress-pct').textContent=pct+'%';
+  document.getElementById('progress-fill').style.width=pct+'%';
+  const btn=document.getElementById('submit-btn');
+  if(done===total){btn.className='submit-btn ready';btn.disabled=false;btn.textContent='查看我的结果 →';}
+  else{btn.className='submit-btn disabled';btn.disabled=true;btn.textContent=`还有 ${total-done} 题未完成`;}
+}
+function showResults(){
+  const vals=Object.values(answers),total=vals.reduce((s,v)=>s+v,0),avg=total/questions.length;
+  let emoji,tag,tagBg,tagColor;
+  if(avg>5.5){emoji='✨';tag='高敏感倾向较强';tagBg='#ede8ff';tagColor='#6a5acd';}
+  else if(avg>5){emoji='🌿';tag='有明显的高敏感倾向';tagBg='#e8f4ee';tagColor='#4a8c6a';}
+  else if(avg>3.5){emoji='🌱';tag='中等敏感程度';tagBg='#f0eeee';tagColor='#888';}
+  else{emoji='☁️';tag='敏感程度相对较低';tagBg='#eeeef5';tagColor='#aaa';}
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-avg').textContent=avg.toFixed(1);
+  document.getElementById('res-tag').textContent=tag;
+  document.getElementById('res-tag').style.background=tagBg;
+  document.getElementById('res-tag').style.color=tagColor;
+  const subContainer=document.getElementById('sub-scores');subContainer.innerHTML='';
+  for(const[key,info]of Object.entries(subscales)){
+    const subTotal=info.qs.reduce((s,id)=>s+(answers[id]||0),0),subAvg=subTotal/info.qs.length,pct=((subAvg-1)/6)*100,isHigh=subAvg>5;
+    const div=document.createElement('div');div.className='sub-item';
+    div.innerHTML=`<div class="sub-top"><div><span class="sub-name">${info.name}</span><span class="sub-desc">${info.desc}</span></div><span class="sub-score" style="color:${isHigh?info.color:'#bbb'}">${subAvg.toFixed(1)}</span></div><div class="sub-bar-bg"><div class="sub-bar-fill" style="background:${isHigh?info.color:'#ccc'};width:0%" data-pct="${pct}"></div></div>`;
+    subContainer.appendChild(div);
+  }
+  document.getElementById('test-section').style.display='none';
+  document.getElementById('result-section').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>{document.querySelectorAll('.sub-bar-fill').forEach(bar=>{bar.style.width=bar.dataset.pct+'%';});},100);
+}
+function resetTest(){
+  Object.keys(answers).forEach(k=>delete answers[k]);
+  questions.forEach(q=>{const card=document.getElementById('card-'+q.id);card.classList.remove('answered');card.querySelectorAll('.scale-btn').forEach(b=>b.classList.remove('selected'));});
+  updateProgress();
+  document.getElementById('result-section').style.display='none';
+  document.getElementById('test-section').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
