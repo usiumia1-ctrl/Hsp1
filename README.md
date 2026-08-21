@@ -123,19 +123,54 @@
 
 ## 第三步：部署
 
-在服务器的 SSH 窗口里，逐条敲：
+> ### ⚠️ 手机上操作先看这两条
+>
+> **1. 命令一条一条敲，不要一次粘贴多行。**
+> 一次粘贴多行的话，`apt`、`git`、`nano` 这类会读取输入的命令会把你后面几行当成自己的输入吞掉——那几行只是显示在屏幕上，实际从来没执行。典型症状是后面报 `No such file or directory`，因为中间的 `git clone` 或 `cd` 根本没跑。
+>
+> **2. 先装 `tmux`，不然断线就前功尽弃。**
+> 浏览器版 SSH 在手机上很容易断，**一断线正在跑的命令就被直接杀掉**。装依赖要跑好几分钟，中途断了就得重来。`tmux` 能让命令在服务器上继续跑，重连后原样接回现场。
+
+### 3.1 装 git 和 tmux
 
 ```bash
-# 装 git
-sudo apt update && sudo apt install -y git
+sudo apt update
+```
 
-# 拉代码
-git clone https://github.com/usiumia1-ctrl/hsp1.git
-cd hsp1
-git checkout claude/mobile-discord-bot-dev-6nnto8
+```bash
+sudo apt install -y git tmux
+```
 
-# 第一次跑：装 Node、配 swap、装依赖，然后停下来等你填配置
-bash scripts/deploy.sh
+### 3.2 拉代码
+
+下面这条是单行，可以整条粘贴：
+
+```bash
+cd ~ && git clone https://github.com/usiumia1-ctrl/Hsp1.git hsp1 && cd hsp1 && git checkout claude/mobile-discord-bot-dev-6nnto8 && ls
+```
+
+看到 `README.md`、`src`、`scripts` 等文件名就说明成功了。
+
+> 如果提示目录已存在，先 `rm -rf ~/hsp1` 再重来。
+
+### 3.3 开一个 tmux 会话
+
+```bash
+tmux new -s bot
+```
+
+屏幕闪一下、底部出现绿色状态栏，就说明进去了。**接下来所有命令都在这里面跑。**
+
+万一断线了，重新连上 SSH 后敲这条就能回到现场：
+
+```bash
+tmux attach -t bot
+```
+
+### 3.4 跑部署脚本
+
+```bash
+cd ~/hsp1 && bash scripts/deploy.sh
 ```
 
 脚本会生成一个空的 `.env` 然后停住。把钥匙填进去：
@@ -290,6 +325,8 @@ sudo journalctl -u aibot -n 50 --no-pager
 
 | 症状 | 原因 |
 |---|---|
+| `No such file or directory` | 多半是一次粘贴了多行，中间的 `git clone` 或 `cd` 被 apt 之类的命令吞掉了。一条一条重新敲 |
+| 装到一半 SSH 断了 | 没在 tmux 里跑。重连后 `tmux attach -t bot` 接回去；没开过 tmux 就只能重跑脚本（脚本是幂等的，重跑安全） |
 | @ 它完全没反应 | MESSAGE CONTENT INTENT 没开（开发者后台 → Bot 页面） |
 | 斜杠命令不出现 | `.env` 里没填 `DISCORD_GUILD_ID`，全局命令要等最多 1 小时 |
 | 命令说「只有管理员能用」 | `ADMIN_USER_IDS` 没填，或填的不是你的用户 ID |
