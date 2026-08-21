@@ -1,0 +1,66 @@
+{
+  "_说明": "这是默认配置。大部分项目也能在 Discord 里用斜杠命令改，命令改的值存在数据库里，优先级高于这个文件。想彻底重置某项就用 /config reset。",
+
+  "provider": {
+    "_说明": "default 是默认用哪家。fallbackOrder 是主供应商挂掉时的自动降级顺序。",
+    "default": "gemini",
+    "fallbackOrder": ["gemini", "openai", "claude"],
+
+    "_模型说明": "模型名会变，用 /model list 可以查当前账号实际可用的型号。Gemini 免费额度：flash 约 250 次/天，flash-lite 约 1000 次/天。Claude 和 OpenAI 都是按量付费，没有免费额度。",
+    "models": {
+      "gemini": "gemini-3.6-flash",
+      "openai": "gpt-5.5",
+      "claude": "claude-opus-5"
+    },
+
+    "_省钱备选": {
+      "gemini": "gemini-3.5-flash-lite（额度更高）",
+      "claude": "claude-haiku-4-5（$1/$5 每百万 token，比 opus 的 $5/$25 便宜很多）"
+    },
+
+    "maxOutputTokens": 800,
+    "temperature": 0.9,
+    "timeoutMs": 60000
+  },
+
+  "persona": {
+    "_说明": "default 是启动时用哪套人设，对应 personas/ 目录里的文件名（不含 .md）。styleFile 是叠加在所有人设之上的全局风格提示词。",
+    "default": "网友",
+    "styleFile": "prompts/style.md"
+  },
+
+  "memory": {
+    "_说明": "contextMessages 是每次请求带多少条历史进 prompt，调大更懂上下文但更烧 token。retentionDays 是数据库里保留多少天，过期自动删。",
+    "contextMessages": 30,
+    "retentionDays": 14,
+    "maxMessageChars": 1000
+  },
+
+  "idle": {
+    "_说明": "主动插话。真正决定烧多少额度的是 cooldownSeconds 和 dailyMax，不是 probability —— 冷却 N 秒意味着每天每个频道最多 86400/N 次。",
+    "enabled": true,
+    "probability": 0.5,
+    "cooldownSeconds": 300,
+    "activityWindowMinutes": 5,
+    "activityMinMessages": 3,
+    "dailyMax": 120,
+
+    "_channels说明": "留空数组 = 所有频道都可能插话。填了频道 ID 就只在这些频道插话。",
+    "channels": [],
+
+    "_quietHours说明": "静默时段，这期间完全不插话。start 到 end 是 24 小时制。设成相同的数字表示不启用。",
+    "quietHours": {
+      "enabled": true,
+      "start": 2,
+      "end": 8,
+      "timezone": "Asia/Shanghai"
+    }
+  },
+
+  "limits": {
+    "_说明": "dailyRequestMax 是所有 AI 调用的每日总闸，防止某天被刷爆烧钱，超了当天就不再调 API。userPerMinute 是单个用户每分钟最多触发几次。",
+    "dailyRequestMax": 240,
+    "userPerMinute": 5,
+    "replyMaxChars": 1900
+  }
+}

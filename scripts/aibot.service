@@ -1,0 +1,33 @@
+[Unit]
+Description=Discord AI Bot
+Documentation=https://github.com/usiumia1-ctrl/hsp1
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__USER__
+WorkingDirectory=__DIR__
+EnvironmentFile=__DIR__/.env
+ExecStart=__NODE__ __DIR__/src/index.js
+
+# 崩了就拉起来，但别陷入疯狂重启的死循环
+Restart=always
+RestartSec=10
+StartLimitBurst=5
+StartLimitIntervalSec=120
+
+# 日志直接进 journald，用 journalctl -u aibot -f 看
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=aibot
+
+# 一点基本的加固：只允许它写自己的 data 目录
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=__DIR__/data
+
+[Install]
+WantedBy=multi-user.target
