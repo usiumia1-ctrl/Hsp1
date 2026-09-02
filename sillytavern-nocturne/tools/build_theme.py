@@ -50,10 +50,11 @@ BASE = {
 }
 
 
-def write(name, css_path):
+def write(name, *css_paths):
+    """把若干个 css 文件按顺序拼成一份 custom_css（顺序 = 层叠顺序，别搞反）。"""
     theme = dict(BASE)
     theme["name"] = name
-    theme["custom_css"] = open(css_path, encoding="utf-8").read()
+    theme["custom_css"] = "\n\n".join(open(p, encoding="utf-8").read() for p in css_paths)
     out_dir = os.path.join(HERE, "themes")
     os.makedirs(out_dir, exist_ok=True)
     out = os.path.join(out_dir, name + ".json")
@@ -63,5 +64,10 @@ def write(name, css_path):
 
 
 if __name__ == "__main__":
-    write("夜笺 Nocturne", os.path.join(HERE, "css", "nocturne.inline.css"))
-    write("夜笺 Nocturne 外链版", os.path.join(HERE, "css", "nocturne.css"))
+    css = lambda n: os.path.join(HERE, "css", n)
+    # 默认版：内嵌贴图 + 信封页眉
+    write("夜笺 Nocturne", css("nocturne.inline.css"), css("nocturne-envelope.css"))
+    # 不要信封页眉的版本
+    write("夜笺 Nocturne 素页版", css("nocturne.inline.css"))
+    # 贴图走 /user/images/nocturne/ 的小体积版本
+    write("夜笺 Nocturne 外链版", css("nocturne.css"), css("nocturne-envelope.css"))

@@ -1,0 +1,245 @@
+/* ==========================================================================
+   夜笺 · Nocturne —— 信封页眉（可插拔的一层）
+   用法：在自定义 CSS 里，先贴 nocturne.css，再把这一段贴在它后面。
+        （要浅羊皮纸配色的话，顺序是 nocturne.css → nocturne-parchment.css → 本文件）
+   不想要了，把这一段删掉就回到普通页眉，主文件不受影响。
+   --------------------------------------------------------------------------
+   页眉变成一只信封：
+       封口折线（V 形）+ 两道细绳 + 中央火漆（圆形头像）
+       左边 № 楼层 当邮戳，右边耗时 / token 当邮资批注
+       名字行变成「寄自 XXX 缄」，时间戳当落款日期
+   ========================================================================== */
+
+:root {
+    /* 火漆颜色：角色用深红，用户用黄铜 */
+    --n-wax: #7c2b25;
+    --n-wax-user: #8a6a2f;
+    --n-seal: 50px;
+    /* 火漆直径 */
+    --n-twine: var(--n-gold-soft);
+    /* 细绳颜色：跟着烫金走，换浅色皮时自动加深 */
+    --n-header-h: 72px;
+    /* 封口需要比普通页眉高一点，折线才立得住 */
+}
+
+/* --------------------------------------------------------------------------
+   1. 封口：折线 + 细绳 + 折纸明暗
+   -------------------------------------------------------------------------- */
+#chat .mes .mesAvatarWrapper {
+    justify-content: center;
+    /* 火漆要探出封口压在下面一行上，所以这里不能裁 */
+    overflow: visible;
+    padding: 0 2px;
+    margin-bottom: 6px;
+}
+
+#chat .mes .mesAvatarWrapper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+        /* 左半边：左上角 → 正下方中点 */
+        linear-gradient(to bottom right,
+            transparent calc(50% - 0.6px), var(--n-gold-soft) 50%, transparent calc(50% + 0.6px)) left top / 50% 100% no-repeat,
+        /* 右半边：右上角 → 正下方中点 */
+        linear-gradient(to bottom left,
+            transparent calc(50% - 0.6px), var(--n-gold-soft) 50%, transparent calc(50% + 0.6px)) right top / 50% 100% no-repeat,
+        /* 两道细绳，像实物信封上捆的那两条 */
+        linear-gradient(var(--n-twine), var(--n-twine)) calc(50% - 13px) 0 / 1px 100% no-repeat,
+        linear-gradient(var(--n-twine), var(--n-twine)) calc(50% + 13px) 0 / 1px 100% no-repeat,
+        /* 封口比信封纸略亮一点，才有折过的感觉 */
+        linear-gradient(180deg, rgba(255, 240, 210, 0.06), transparent 72%);
+}
+
+/* 封口中央的暗纹（原来的页眉装饰改到这里，压在火漆背后当压印） */
+#chat .mes .mesAvatarWrapper::after {
+    inset: 0 28% 0 28%;
+    opacity: calc(var(--n-watermark) * 1.8);
+    background-position: center;
+    background-size: auto 150%;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent);
+}
+
+/* 封口区已经有折线了，上面两个角的花纹去掉，留下面两角就够 */
+#chat .mes::after {
+    background-image: none, none,
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><g fill='none' stroke='%23c9a86a' stroke-width='1.15' stroke-linecap='round' opacity='.85'><path d='M2 26v8a4 4 0 0 0 4 4h8'/><path d='M6 20c0 6 2 10 8 11'/><path d='M14 31c-4 0-6-2-6-5s3-4 4-2-1 4-4 3'/></g></svg>"),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><g fill='none' stroke='%23c9a86a' stroke-width='1.15' stroke-linecap='round' opacity='.85'><path d='M38 26v8a4 4 0 0 1-4 4h-8'/><path d='M34 20c0 6-2 10-8 11'/><path d='M26 31c4 0 6-2 6-5s-3-4-4-2 1 4 4 3'/></g></svg>");
+}
+
+/* --------------------------------------------------------------------------
+   2. 火漆：圆形头像 + 蜡的边缘和压印高光
+   -------------------------------------------------------------------------- */
+#chat .mes .mesAvatarWrapper .avatar {
+    order: 0;
+    position: relative;
+    z-index: 4;
+    flex: 0 0 auto;
+    /* 左右都是 auto，火漆就被挤到正中央 */
+    margin: 0 auto;
+    align-self: flex-end;
+    width: var(--n-seal);
+    height: var(--n-seal);
+    /* 蜡不会是正圆，四个角各错开一点 */
+    border-radius: 49% 51% 52% 48% / 51% 49% 48% 52%;
+    border: 4px solid var(--n-wax);
+    overflow: hidden;
+    /* 稍微探出封口，压在名字行上，像真的封缄 */
+    transform: translateY(22%) rotate(-2deg);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.55),
+        inset 0 0 10px rgba(0, 0, 0, 0.55),
+        0 4px 10px -3px rgba(0, 0, 0, 0.95);
+}
+
+#chat .mes[is_user="true"] .mesAvatarWrapper .avatar {
+    border-color: var(--n-wax-user);
+    transform: translateY(22%) rotate(2deg);
+}
+
+#chat .mes .mesAvatarWrapper .avatar img {
+    border-radius: 50%;
+    filter: sepia(0.5) saturate(0.8) contrast(1.06) brightness(0.9);
+}
+
+/* 蜡面的高光与压痕 */
+#chat .mes .mesAvatarWrapper .avatar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 32% 26%, rgba(255, 238, 205, 0.26), transparent 52%),
+        radial-gradient(circle at 72% 80%, rgba(0, 0, 0, 0.4), transparent 58%);
+}
+
+#chat .mes:hover .mesAvatarWrapper .avatar {
+    transform: translateY(22%) rotate(0deg);
+}
+
+/* --------------------------------------------------------------------------
+   3. 楼层 / 耗时 / token → 邮戳与邮资批注
+   -------------------------------------------------------------------------- */
+#chat .mes .mesIDDisplay {
+    /* 楼层号做成盖歪了的圆邮戳 */
+    order: -1;
+    margin-right: auto;
+    padding: 5px 2px;
+    min-width: 2.6em;
+    text-align: center;
+    border: 1px dashed var(--n-gold-soft);
+    border-radius: 50%;
+    transform: rotate(-9deg);
+    color: var(--n-ink-dim);
+    opacity: 0.9;
+}
+
+#chat .mes .mes_timer,
+#chat .mes .tokenCounterDisplay {
+    /* 右边两行像信封上写的邮资 / 重量批注 */
+    order: 1;
+    border-left: none;
+    border-bottom: 1px solid var(--n-gold-faint);
+    padding: 0 2px 2px;
+    margin-left: 6px;
+    font-style: italic;
+    opacity: 0.75;
+}
+
+#chat .mes .mes_timer {
+    margin-left: auto;
+}
+
+/* --------------------------------------------------------------------------
+   4. 名字行 → 寄件人落款
+   -------------------------------------------------------------------------- */
+#chat .mes .ch_name {
+    /* 给探下来的火漆留出净空 */
+    padding-top: 10px;
+}
+
+#chat .mes .ch_name .name_text::before {
+    content: "寄自 · ";
+    font-family: var(--n-font-body);
+    font-size: 0.78em;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    color: var(--n-ink-faint);
+}
+
+#chat .mes[is_user="true"] .ch_name .name_text::before {
+    content: "回函 · ";
+}
+
+#chat .mes[is_system="true"] .ch_name .name_text::before {
+    content: "存档 · ";
+}
+
+/* 中式信封的落款习惯：寄件人名字后面缀一个「缄」 */
+#chat .mes .ch_name .name_text::after {
+    content: " 缄";
+    font-size: 0.72em;
+    letter-spacing: 0.1em;
+    color: var(--n-ink-faint);
+    opacity: 0.8;
+}
+
+#chat .mes[is_system="true"] .ch_name .name_text::after {
+    content: "";
+}
+
+/* 时间戳当落款日期，后面缀上收件人。
+   CSS 读不到对方的名字，所以用书信通称；想改称呼就改这几处 content。 */
+#chat .mes .ch_name .timestamp {
+    font-style: italic;
+    opacity: 0.85;
+}
+
+#chat .mes .ch_name .timestamp::after {
+    content: " · 致 阁下";
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+}
+
+#chat .mes[is_user="true"] .ch_name .timestamp::after {
+    content: " · 致 卿";
+}
+
+#chat .mes[is_system="true"] .ch_name .timestamp::after {
+    content: "";
+}
+
+/* --------------------------------------------------------------------------
+   5. 手机端：封口压矮，火漆缩小，避免一屏只剩信封
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 1000px) {
+    :root {
+        --n-header-h: 60px;
+        --n-seal: 40px;
+    }
+
+    #chat .mes .mesAvatarWrapper::after {
+        inset: 0 24% 0 24%;
+    }
+
+    #chat .mes .ch_name {
+        padding-top: 8px;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    :root {
+        --n-header-h: 54px;
+        --n-seal: 36px;
+    }
+
+    /* 太窄的时候邮戳容易和名字挤在一起，收一点 */
+    #chat .mes .mesIDDisplay {
+        padding: 4px 1px;
+        transform: rotate(-7deg) scale(0.92);
+    }
+}

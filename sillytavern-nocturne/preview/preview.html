@@ -8,10 +8,14 @@
 
     <!-- 主题本体 -->
     <link rel="stylesheet" href="../css/nocturne.css">
-    <!-- 加 ?skin=parchment 就能预览浅羊皮纸配色 -->
+    <!-- ?skin=parchment 预览浅羊皮纸配色；?envelope=1 预览信封页眉，可以叠加 -->
     <script>
-        if (new URLSearchParams(location.search).get('skin') === 'parchment') {
+        const q = new URLSearchParams(location.search);
+        if (q.get('skin') === 'parchment') {
             document.write('<link rel="stylesheet" href="../css/nocturne-parchment.css">');
+        }
+        if (q.get('envelope') === '1') {
+            document.write('<link rel="stylesheet" href="../css/nocturne-envelope.css">');
         }
     </script>
 
