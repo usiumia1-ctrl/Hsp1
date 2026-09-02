@@ -1,0 +1,454 @@
+<div class="dp-root">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Noto+Serif+SC:wght@400;600;900&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=UnifrakturCook:wght@700&display=swap');
+
+/* ============ 变量：晨刊（默认） ============ */
+.dp-root{
+  --dp-paper:#efe7d3;
+  --dp-paper2:#e5dabe;
+  --dp-paper3:#dccfae;
+  --dp-ink:#15120c;
+  --dp-ink2:#4d4335;
+  --dp-rule:#2a2118;
+  --dp-seal:#8d2417;
+  --dp-grain:.34;
+  --dp-blend:multiply;
+  --dp-shade:rgba(45,32,14,.40);
+
+  position:relative;
+  width:100%;
+  max-width:760px;
+  margin:16px auto;
+  container-type:inline-size;
+  font-family:'Noto Serif SC','Songti SC','SimSun',serif;
+  color:var(--dp-ink);
+  line-height:1.7;
+  -webkit-text-size-adjust:100%;
+  text-rendering:optimizeLegibility;
+}
+.dp-root *{box-sizing:border-box;margin:0;padding:0;}
+
+/* ============ 变量：夜刊 ============ */
+.dp-root:has(.dp-mode-input:checked){
+  --dp-paper:#17140f;
+  --dp-paper2:#211b14;
+  --dp-paper3:#2b241a;
+  --dp-ink:#ece1cb;
+  --dp-ink2:#a1937a;
+  --dp-rule:#6a5942;
+  --dp-seal:#c66a52;
+  --dp-grain:.16;
+  --dp-blend:screen;
+  --dp-shade:rgba(0,0,0,.6);
+}
+
+/* ============ 报纸外壳 ============ */
+.dp-paper{
+  position:relative;
+  background:var(--dp-paper);
+  border:1px solid var(--dp-rule);
+  box-shadow:0 10px 26px var(--dp-shade), inset 0 0 60px rgba(90,62,20,.12);
+  overflow:hidden;
+}
+/* 纸张颗粒与陈年污渍 */
+.dp-paper::before{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:
+    radial-gradient(rgba(0,0,0,.55) .6px, transparent .7px),
+    radial-gradient(rgba(0,0,0,.35) .6px, transparent .7px);
+  background-size:3px 3px, 7px 7px;
+  background-position:0 0, 2px 3px;
+  opacity:var(--dp-grain);
+  mix-blend-mode:var(--dp-blend);
+}
+.dp-paper::after{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 4% 2%, rgba(120,84,26,.20), transparent 34%),
+    radial-gradient(ellipse at 97% 88%, rgba(120,84,26,.18), transparent 32%),
+    radial-gradient(ellipse at 50% 50%, transparent 58%, rgba(60,40,10,.16) 100%),
+    linear-gradient(90deg, transparent 49.4%, rgba(70,50,20,.14) 50%, transparent 50.6%);
+  mix-blend-mode:var(--dp-blend);
+}
+
+/* ============ 晨刊 / 夜刊 开关 ============ */
+.dp-mode{
+  position:absolute;top:9px;right:11px;z-index:9;cursor:pointer;
+  font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:1.4px;
+  padding:3px 9px;border:1px solid var(--dp-rule);border-radius:2px;
+  background:var(--dp-paper2);color:var(--dp-ink);
+  user-select:none;transition:background .25s ease,color .25s ease;
+}
+.dp-mode:hover{background:var(--dp-ink);color:var(--dp-paper);}
+.dp-mode input{position:absolute;opacity:0;width:0;height:0;}
+.dp-mode .dp-m2{display:none;}
+.dp-root:has(.dp-mode-input:checked) .dp-mode .dp-m1{display:none;}
+.dp-root:has(.dp-mode-input:checked) .dp-mode .dp-m2{display:inline;}
+
+/* ============ 折叠头（未展开时的报头条） ============ */
+.dp-fold{
+  list-style:none;cursor:pointer;position:relative;z-index:2;
+  display:flex;align-items:center;gap:10px;
+  padding:11px 96px 11px 14px;
+  border-bottom:1px solid var(--dp-rule);
+  background:linear-gradient(180deg,var(--dp-paper2),var(--dp-paper));
+}
+.dp-fold::-webkit-details-marker{display:none;}
+.dp-fold-flag{
+  flex:none;font-family:'Cinzel',serif;font-weight:900;font-size:10px;letter-spacing:1.6px;
+  padding:3px 7px;background:var(--dp-ink);color:var(--dp-paper);white-space:nowrap;
+}
+.dp-fold-title{
+  flex:1;min-width:0;font-weight:900;font-size:13px;letter-spacing:.5px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.dp-fold-hint{
+  flex:none;font-size:10px;letter-spacing:.12em;color:var(--dp-ink2);white-space:nowrap;
+}
+.dp-fold-hint::after{content:'展开全文';}
+.dp-paper[open] .dp-fold-hint::after{content:'收起';}
+.dp-fold-arrow{flex:none;font-size:10px;color:var(--dp-ink2);transition:transform .35s ease;}
+.dp-paper[open] .dp-fold-arrow{transform:rotate(180deg);}
+.dp-paper[open] .dp-fold-title{opacity:.55;}
+
+/* ============ 报芯 ============ */
+.dp-issue{position:relative;z-index:2;padding:16px 18px 12px;animation:dp-unfold .45s ease both;}
+@keyframes dp-unfold{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+
+/* ---- 报头 ---- */
+.dp-masthead{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;}
+.dp-mast-side{
+  font-family:'Playfair Display',serif;font-style:italic;font-size:10px;line-height:1.35;
+  color:var(--dp-ink2);letter-spacing:.4px;white-space:nowrap;
+}
+.dp-mast-side.r{text-align:right;}
+.dp-crest{width:54px;height:40px;color:var(--dp-ink);display:block;margin:0 auto 2px;}
+.dp-mast-core{text-align:center;min-width:0;}
+.dp-mast-the{
+  font-family:'UnifrakturCook','Playfair Display',serif;font-size:15px;line-height:.9;
+  color:var(--dp-ink);margin-bottom:-2px;
+}
+.dp-mast-cn{
+  font-weight:900;font-size:clamp(24px,7.4cqw,40px);line-height:1.06;letter-spacing:.16em;
+  text-indent:.16em;
+  -webkit-text-stroke:.5px var(--dp-ink);
+  text-shadow:1px 0 0 var(--dp-ink), 0 1px 0 rgba(0,0,0,.18);
+}
+.dp-mast-en{
+  font-family:'Cinzel',serif;font-weight:900;font-size:10px;letter-spacing:.42em;
+  text-indent:.42em;color:var(--dp-ink2);margin-top:3px;
+}
+.dp-mast-tag{
+  margin-top:6px;padding:3px 0;border-top:1px solid var(--dp-rule);border-bottom:3px double var(--dp-rule);
+  font-size:10px;letter-spacing:.28em;text-indent:.28em;color:var(--dp-ink2);
+}
+
+/* ---- 顶部信息条 ---- */
+.dp-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:9px;border:1px solid var(--dp-rule);}
+.dp-strip-cell{padding:6px 8px;border-right:1px solid var(--dp-rule);background:var(--dp-paper2);min-width:0;}
+.dp-strip-cell:last-child{border-right:0;}
+.dp-cell-h{
+  font-family:'Cinzel',serif;font-size:9px;font-weight:600;letter-spacing:1.4px;
+  color:var(--dp-ink2);border-bottom:1px dotted var(--dp-rule);padding-bottom:2px;margin-bottom:3px;
+  display:flex;justify-content:space-between;gap:4px;
+}
+.dp-cell-m{font-weight:700;font-size:12px;line-height:1.35;letter-spacing:.02em;word-break:break-word;}
+.dp-cell-s{font-size:10px;color:var(--dp-ink2);line-height:1.45;margin-top:1px;word-break:break-word;}
+
+/* ---- 主版面 ---- */
+.dp-plate{display:grid;grid-template-columns:66px 1fr 172px;gap:14px;margin-top:12px;}
+.dp-filler{
+  color:var(--dp-ink2);opacity:.38;min-height:100%;
+  border-right:1px solid var(--dp-rule);padding-right:10px;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 2px, var(--dp-paper) 2px 6px),
+    repeating-linear-gradient(to right, currentColor 0 3px, transparent 3px 5px);
+  -webkit-mask-image:linear-gradient(180deg,#000 0 82%,transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0 82%,transparent 100%);
+}
+.dp-lead{min-width:0;}
+.dp-kicker{
+  display:inline-block;font-weight:900;font-size:11px;letter-spacing:.22em;text-indent:.22em;
+  background:var(--dp-ink);color:var(--dp-paper);padding:3px 9px;margin-bottom:7px;
+  animation:dp-blink 4.5s ease-in-out infinite;
+}
+@keyframes dp-blink{0%,100%{opacity:1;}50%{opacity:.72;}}
+.dp-headline{
+  font-weight:900;font-size:clamp(21px,5.6cqw,34px);line-height:1.16;letter-spacing:.01em;
+  text-wrap:balance;
+  -webkit-text-stroke:.55px var(--dp-ink);
+  text-shadow:.6px .6px 0 rgba(0,0,0,.22);
+  margin-bottom:6px;
+}
+.dp-byline{
+  font-size:10px;color:var(--dp-ink2);font-style:italic;
+  padding:4px 0;border-top:1px solid var(--dp-rule);border-bottom:1px solid var(--dp-rule);
+  display:flex;flex-wrap:wrap;gap:4px 12px;
+}
+.dp-lede{
+  margin-top:9px;font-size:13px;line-height:1.9;text-align:justify;white-space:pre-wrap;
+  columns:2;column-gap:16px;column-rule:1px solid var(--dp-rule);
+  orphans:2;widows:2;
+}
+.dp-lede::first-letter{
+  float:left;font-size:3.1em;line-height:.86;font-weight:900;
+  margin:2px 6px 0 0;padding:2px 4px 0 0;
+  -webkit-text-stroke:.6px var(--dp-ink);
+}
+.dp-tail{
+  margin-top:9px;padding-top:5px;border-top:3px double var(--dp-rule);
+  font-size:10px;letter-spacing:.16em;color:var(--dp-ink2);text-align:right;
+}
+
+/* ---- 右栏 ---- */
+.dp-aside{
+  min-width:0;border:1px solid var(--dp-rule);background:var(--dp-paper2);
+  padding:9px 10px 12px;position:relative;display:flex;flex-direction:column;gap:7px;
+}
+.dp-photo{margin:-9px -10px 2px;border-bottom:1px solid var(--dp-rule);}
+.dp-photo-box{
+  --dp-pi:var(--dp-ink);
+  --dp-pp:var(--dp-paper2);
+  position:relative;height:104px;overflow:hidden;
+  background:linear-gradient(180deg,var(--dp-paper3),var(--dp-paper2));
+  filter:contrast(1.12) saturate(.35);
+}
+/* 内联版画插图：城堡 · 送信猫头鹰 · 月亮（无外链，离线可用） */
+.dp-photo-fig{position:absolute;inset:0;width:100%;height:100%;color:var(--dp-pi);display:block;}
+.dp-ink-fill{fill:currentColor;}
+.dp-ink-line{fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round;}
+.dp-cut{fill:var(--dp-pp);}
+.dp-feather{fill:none;stroke:var(--dp-pp);stroke-width:.9;stroke-linecap:round;opacity:.75;}
+.dp-moon{fill:currentColor;opacity:.16;}
+.dp-moon-ring{fill:none;stroke:currentColor;stroke-width:.7;opacity:.45;}
+.dp-star{fill:currentColor;opacity:.5;}
+.dp-owl{transform-origin:92px 44px;animation:dp-fly 7s ease-in-out infinite alternate;}
+.dp-wing{transform-origin:92px 42px;animation:dp-flap 3.4s ease-in-out infinite alternate;}
+@keyframes dp-fly{
+  0%{transform:translate(-3px,2px);}
+  100%{transform:translate(3px,-2px);}
+}
+@keyframes dp-flap{
+  0%{transform:rotate(-3.5deg) scaleY(.94);}
+  100%{transform:rotate(3.5deg) scaleY(1.04);}
+}
+@media (prefers-reduced-motion:reduce){
+  .dp-owl,.dp-wing,.dp-seal,.dp-kicker{animation:none;}
+}
+.dp-photo-dot{
+  position:absolute;inset:0;
+  background-image:radial-gradient(rgba(0,0,0,.5) .55px, transparent .8px);
+  background-size:2.4px 2.4px;mix-blend-mode:multiply;opacity:.42;
+}
+.dp-root:has(.dp-mode-input:checked) .dp-photo-box{
+  --dp-pi:#15120c;
+  --dp-pp:#d2c7ac;
+  background:linear-gradient(180deg,#c6bb9f,#d5cbb2);
+}
+.dp-photo-cap{
+  padding:3px 8px;font-size:9px;color:var(--dp-ink2);letter-spacing:.06em;
+  border-top:1px dotted var(--dp-rule);
+}
+.dp-aside-h{
+  font-family:'Cinzel',serif;font-size:9px;font-weight:600;letter-spacing:1.5px;color:var(--dp-ink2);
+  border-bottom:1px solid var(--dp-rule);padding-bottom:2px;
+}
+.dp-cred{
+  font-weight:900;font-size:15px;letter-spacing:.1em;line-height:1.3;
+  border-left:3px solid var(--dp-seal);padding-left:7px;color:var(--dp-ink);
+}
+.dp-src{font-size:11px;line-height:1.5;font-weight:600;word-break:break-word;}
+.dp-note{font-size:9.5px;line-height:1.65;color:var(--dp-ink2);text-align:justify;}
+.dp-seal{
+  align-self:flex-end;margin-top:auto;
+  width:60px;height:60px;border:2px double var(--dp-seal);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:'Cinzel',serif;font-size:8px;font-weight:900;line-height:1.25;letter-spacing:.5px;
+  color:var(--dp-seal);opacity:.62;transform:rotate(-14deg);
+  animation:dp-seal-breathe 6s ease-in-out infinite alternate;
+}
+@keyframes dp-seal-breathe{
+  from{transform:rotate(-16deg) scale(.97);opacity:.5;}
+  to{transform:rotate(-9deg) scale(1.03);opacity:.7;}
+}
+
+/* ---- 页脚栏目条 ---- */
+.dp-foot{
+  margin-top:12px;padding-top:6px;border-top:3px double var(--dp-rule);
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;
+  font-size:10px;letter-spacing:.1em;color:var(--dp-ink2);
+}
+.dp-foot b{color:var(--dp-ink);font-weight:900;}
+
+/* ============ 窄屏适配 ============ */
+@container (max-width:600px){
+  .dp-plate{grid-template-columns:1fr;gap:11px;}
+  .dp-filler{display:none;}
+  .dp-lede{columns:1;}
+  .dp-strip{grid-template-columns:repeat(2,1fr);}
+  .dp-strip-cell:nth-child(2n){border-right:0;}
+  .dp-strip-cell:nth-child(-n+2){border-bottom:1px solid var(--dp-rule);}
+  .dp-mast-side{display:none;}
+  .dp-masthead{grid-template-columns:1fr;}
+  .dp-issue{padding:13px 12px 10px;}
+  .dp-fold-hint{display:none;}
+}
+@media (max-width:600px){
+  .dp-plate{grid-template-columns:1fr;gap:11px;}
+  .dp-filler{display:none;}
+  .dp-lede{columns:1;}
+  .dp-strip{grid-template-columns:repeat(2,1fr);}
+  .dp-strip-cell:nth-child(2n){border-right:0;}
+  .dp-strip-cell:nth-child(-n+2){border-bottom:1px solid var(--dp-rule);}
+  .dp-mast-side{display:none;}
+  .dp-masthead{grid-template-columns:1fr;}
+  .dp-issue{padding:13px 12px 10px;}
+  .dp-fold-hint{display:none;}
+}
+</style>
+
+<label class="dp-mode"><input type="checkbox" class="dp-mode-input"><span class="dp-m1">☀ 晨刊</span><span class="dp-m2">☾ 夜刊</span></label>
+
+<details class="dp-paper">
+  <summary class="dp-fold">
+    <span class="dp-fold-flag">THE DAILY PROPHET</span>
+    <span class="dp-fold-title">$6</span>
+    <span class="dp-fold-hint"></span>
+    <span class="dp-fold-arrow">▼</span>
+  </summary>
+
+  <div class="dp-issue">
+
+    <!-- 报头 -->
+    <header class="dp-masthead">
+      <div class="dp-mast-side">bewitch<br>beguile</div>
+      <div class="dp-mast-core">
+        <svg class="dp-crest" viewBox="0 0 64 44" aria-hidden="true">
+          <path d="M32 5 L44 10 V24 C44 32 38 37 32 40 C26 37 20 32 20 24 V10 Z" fill="none" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M32 5 V40 M20 17 H44" stroke="currentColor" stroke-width="1"/>
+          <circle cx="26" cy="12" r="1.8" fill="currentColor"/>
+          <circle cx="38" cy="30" r="1.8" fill="currentColor"/>
+          <path d="M18 9 C11 11 6 15 2 21 C7 20 12 21 16 23" fill="none" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M46 9 C53 11 58 15 62 21 C57 20 52 21 48 23" fill="none" stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+        <div class="dp-mast-the">The</div>
+        <div class="dp-mast-cn">预言家日报</div>
+        <div class="dp-mast-en">DAILY PROPHET</div>
+        <div class="dp-mast-tag">巫师世界最惑人心的大报</div>
+      </div>
+      <div class="dp-mast-side r">spellbind<br>divinate</div>
+    </header>
+
+    <!-- 顶部信息条 -->
+    <div class="dp-strip">
+      <div class="dp-strip-cell">
+        <div class="dp-cell-h"><span>编年纪事</span><span>I</span></div>
+        <div class="dp-cell-m">$1</div>
+        <div class="dp-cell-s">$2</div>
+      </div>
+      <div class="dp-strip-cell">
+        <div class="dp-cell-h"><span>魔法时计</span><span>II</span></div>
+        <div class="dp-cell-m">$3</div>
+        <div class="dp-cell-s">$4</div>
+      </div>
+      <div class="dp-strip-cell">
+        <div class="dp-cell-h"><span>本期版次</span><span>III</span></div>
+        <div class="dp-cell-m">首版 · 次版合刊</div>
+        <div class="dp-cell-s">猫头鹰特急专送 · 一又四分之一钠特</div>
+      </div>
+      <div class="dp-strip-cell">
+        <div class="dp-cell-h"><span>消息来源</span><span>IV</span></div>
+        <div class="dp-cell-m">$8</div>
+        <div class="dp-cell-s">来函请寄伦敦对角巷编辑部</div>
+      </div>
+    </div>
+
+    <!-- 主版面 -->
+    <div class="dp-plate">
+      <div class="dp-filler" aria-hidden="true"></div>
+
+      <div class="dp-lead">
+        <div class="dp-kicker">$5</div>
+        <h2 class="dp-headline">$6</h2>
+        <div class="dp-byline">
+          <span>本报讯 · $8</span>
+          <span>$1 · $3</span>
+        </div>
+        <p class="dp-lede">$7</p>
+        <div class="dp-tail">— 全文续见第叁版 —</div>
+      </div>
+
+      <aside class="dp-aside">
+        <figure class="dp-photo">
+          <div class="dp-photo-box">
+            <svg class="dp-photo-fig" viewBox="0 0 160 104" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <circle class="dp-moon" cx="134" cy="20" r="14"/>
+              <circle class="dp-moon-ring" cx="134" cy="20" r="14"/>
+              <circle class="dp-star" cx="104" cy="12" r="1"/>
+              <circle class="dp-star" cx="146" cy="54" r="1"/>
+              <circle class="dp-star" cx="70" cy="13" r=".9"/>
+              <circle class="dp-star" cx="30" cy="22" r=".9"/>
+              <path class="dp-ink-line" d="M98 64 q11-4 22-1" opacity=".32"/>
+              <path class="dp-ink-line" d="M114 72 q12-4 24-1" opacity=".24"/>
+              <g class="dp-ink-fill">
+                <path d="M0 104 V78 H62 V104 Z"/>
+                <rect x="6" y="60" width="14" height="30"/>
+                <path d="M4 60 L13 42 L22 60 Z"/>
+                <rect x="26" y="50" width="18" height="40"/>
+                <path d="M23 50 L35 28 L47 50 Z"/>
+                <rect x="49" y="66" width="12" height="26"/>
+                <path d="M46 66 L55 50 L64 66 Z"/>
+              </g>
+              <g class="dp-cut">
+                <rect x="10" y="66" width="4" height="6"/>
+                <rect x="31" y="58" width="4" height="7"/>
+                <rect x="36" y="70" width="4" height="6"/>
+                <rect x="53" y="72" width="4" height="6"/>
+              </g>
+              <path class="dp-ink-fill" d="M0 100 q40-8 80-3 t80-5 V104 H0 Z" opacity=".55"/>
+              <g class="dp-owl">
+                <g class="dp-wing">
+                  <path class="dp-ink-fill" d="M86 41 C74 27 60 25 51 31 C62 35 75 41 85 47 Z"/>
+                  <path class="dp-ink-fill" d="M98 41 C110 27 124 25 133 31 C122 35 109 41 99 47 Z"/>
+                  <path class="dp-feather" d="M82 43 C74 39 66 35 58 33"/>
+                  <path class="dp-feather" d="M79 39 C72 34 65 31 58 30"/>
+                  <path class="dp-feather" d="M102 43 C110 39 118 35 126 33"/>
+                  <path class="dp-feather" d="M105 39 C112 34 119 31 126 30"/>
+                </g>
+                <ellipse class="dp-ink-fill" cx="92" cy="45" rx="7.5" ry="9.5"/>
+                <circle class="dp-ink-fill" cx="92" cy="34" r="6.4"/>
+                <path class="dp-ink-fill" d="M86 30 l1.5-5 l3.5 3 Z"/>
+                <path class="dp-ink-fill" d="M98 30 l-1.5-5 l-3.5 3 Z"/>
+                <circle class="dp-cut" cx="89.6" cy="34" r="1.5"/>
+                <circle class="dp-cut" cx="94.4" cy="34" r="1.5"/>
+                <g transform="rotate(-8 92 60)">
+                  <rect class="dp-cut" x="85" y="55" width="14" height="9"/>
+                  <path class="dp-ink-line" d="M85 55 h14 v9 h-14 Z M85 55 L92 60 L99 55" stroke-width=".8"/>
+                </g>
+              </g>
+            </svg>
+            <div class="dp-photo-dot"></div>
+          </div>
+          <figcaption class="dp-photo-cap">本报影像 · 会动的照片</figcaption>
+        </figure>
+        <div class="dp-aside-h">CREDIBILITY 可信度</div>
+        <div class="dp-cred">$9</div>
+        <div class="dp-aside-h">SOURCE 消息渠道</div>
+        <div class="dp-src">$8</div>
+        <p class="dp-note">凡本报刊载之消息，均依《巫师报刊公约》标注可信程度。读者如有异议，可来函申辩，亦可遣猫头鹰当面理论。</p>
+        <div class="dp-seal">MINISTRY<br>APPROVED</div>
+      </aside>
+    </div>
+
+    <!-- 页脚栏目条 -->
+    <div class="dp-foot">
+      <span>魁地奇 <b>8</b></span>
+      <span>保安司 <b>10</b></span>
+      <span>魔法部纪事 <b>18</b></span>
+      <span>魔药与草药 <b>20</b></span>
+      <span>讣告与寻人 <b>24</b></span>
+    </div>
+
+  </div>
+</details>
+</div>
