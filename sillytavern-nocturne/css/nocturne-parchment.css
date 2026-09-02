@@ -28,6 +28,7 @@
     --n-rule-strong: rgba(120, 92, 40, 0.68);
 
     --n-watermark: 0.16;
+    --n-text-halo: rgba(255, 252, 240, 0.85);
 
     --SmartThemeBodyColor: var(--n-ink) !important;
     --SmartThemeEmColor: var(--n-ink-dim) !important;

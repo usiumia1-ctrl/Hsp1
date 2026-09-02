@@ -54,8 +54,13 @@
     /* 角色卡片：比底色亮一档，卡片感才立得住 */
     --n-card-user: rgba(41, 30, 24, 0.97);
     /* 用户卡片（偏暖一点） */
+    --n-text-halo: rgba(0, 0, 0, 0.9);
+    /* 文字描边光晕：压在装饰上的小字靠它保持可读 */
     --n-watermark: 0.1;
-    /* 卡片上拼贴水印的浓度，嫌花就调到 0.04，喜欢就调到 0.18 */
+    /* 拼贴装饰的浓度总开关：页眉素材 = 这个值 x4，正文水印 = x0.5
+       嫌花就调到 0.05，喜欢浓一点就调到 0.16 */
+    --n-header-h: 56px;
+    /* 页眉（头像那一行）的高度 */
     --n-panel: rgba(18, 15, 13, 0.97);
     /* 抽屉 / 弹窗 */
     --n-bar: rgba(14, 12, 10, 0.96);
@@ -94,6 +99,14 @@
     --SmartThemeUserMesBlurTintColor: var(--n-card-user) !important;
     --SmartThemeBotMesBlurTintColor: var(--n-card) !important;
     --SmartThemeFastUIBGColor: var(--n-panel) !important;
+
+    /* 酒馆默认给正文右侧留 30px 放翻页箭头，导致左右不等宽。
+       本主题把箭头挪到卡片下角，所以这里清零，正文左右才真正等距。 */
+    --mes-right-spacing: 0px !important;
+
+    /* 头像尺寸走酒馆自己的变量，改这里比改 .avatar 稳 */
+    --avatar-base-width: 46px !important;
+    --avatar-base-height: 46px !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -162,8 +175,13 @@ body::before {
    -------------------------------------------------------------------------- */
 #chat .mes {
     position: relative;
+    /* 版式：页眉（头像 + 素材装饰）整行在上，正文全宽在下，左右内边距相同 */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     margin: 0 0 var(--n-card-gap) 0;
-    padding: var(--n-card-pad) var(--n-card-pad) calc(var(--n-card-pad) - 2px);
+    /* 下边多留一条，给左右下角的翻页箭头和页码腾地方 */
+    padding: var(--n-card-pad) var(--n-card-pad) calc(var(--n-card-pad) + 12px);
     border: 1px solid var(--n-rule);
     border-radius: var(--n-card-radius);
     background-color: var(--n-card);
@@ -209,13 +227,15 @@ body::before {
     opacity: 0.7;
 }
 
-/* 用户消息：偏暖的信纸，右下角换成花枝水印，左侧加一条牛血红书脊 */
+/* 用户消息：偏暖的信纸。
+   标记走顶部双线而不是左边框，这样卡片左右厚度一致，不破坏等距 */
 #chat .mes[is_user="true"] {
     background-color: var(--n-card-user);
     background-image:
         radial-gradient(130% 100% at 50% -20%, rgba(140, 58, 52, 0.12), transparent 62%),
         var(--n-url-linen);
-    border-left: 3px double var(--n-oxblood);
+    border-top: 3px double var(--n-oxblood);
+    padding-top: calc(var(--n-card-pad) - 2px);
 }
 
 /* 系统消息 / 旁白：压低存在感的一张薄纸 */
@@ -226,10 +246,70 @@ body::before {
 }
 
 /* --------------------------------------------------------------------------
-   4b. 拼贴水印层
-   贴在正文底下、卡片纹理之上；浓度统一由 --n-watermark 控制。
-   放在 .mes_block 的伪元素里（z-index:-1），所以永远压不到文字。
+   4b. 页眉：头像独占一行，右侧压一条素材装饰
+   —— .mesAvatarWrapper 在酒馆里是竖排的（头像 + 编号 + 计时 + token），
+      这里改成横排并撑满整行，正文就自然落到下面一整行。
    -------------------------------------------------------------------------- */
+#chat .mes .mesAvatarWrapper {
+    order: 1;
+    position: relative;
+    flex: 0 0 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    min-height: var(--n-header-h);
+    /* 右边留出翻页箭头的位置，编号不会被压到 */
+    padding-right: 6px;
+    overflow: hidden;
+}
+
+/* 头像靠左，编号 / 计时 / token 一律推到右边 */
+#chat .mes .mesAvatarWrapper .avatar {
+    flex: 0 0 auto;
+    margin-right: auto;
+}
+
+/* 酒馆会给最后一条消息的头像区加 50px 下留白（给旧版箭头让位），这里不需要 */
+#chat .last_mes .mesAvatarWrapper {
+    padding-bottom: 0;
+}
+
+/* 页眉右侧的素材装饰：向左渐隐，压在编号底下，只做气氛不抢字 */
+#chat .mes .mesAvatarWrapper::after {
+    content: "";
+    position: absolute;
+    inset: 0 -6px 0 38%;
+    z-index: -1;
+    pointer-events: none;
+    opacity: calc(var(--n-watermark) * 2.6);
+    background-image: var(--n-url-butterfly);
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: auto 155%;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 55%);
+    mask-image: linear-gradient(90deg, transparent, #000 55%);
+}
+
+#chat .mes[is_user="true"] .mesAvatarWrapper::after {
+    background-image: var(--n-url-flowers);
+    background-size: auto 130%;
+}
+
+#chat .mes[is_system="true"] .mesAvatarWrapper::after {
+    background-image: var(--n-url-news);
+    background-size: auto 120%;
+}
+
+/* 正文块：整整一行，左右不再留额外边距 */
+#chat .mes .mes_block {
+    order: 3;
+    flex: 0 0 100%;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* 正文底下再压一层极淡的水印，让纸面不至于太空 */
 #chat .mes .mes_block::before {
     content: "";
     position: absolute;
@@ -238,23 +318,46 @@ body::before {
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    opacity: var(--n-watermark);
-    background-image: var(--n-url-butterfly);
+    opacity: calc(var(--n-watermark) * 0.5);
+    background-image: var(--n-url-moth);
     background-repeat: no-repeat;
-    background-position: right -18px bottom -14px;
-    background-size: 150px auto;
+    background-position: right -24px bottom -18px;
+    background-size: 170px auto;
 }
 
 #chat .mes[is_user="true"] .mes_block::before {
-    background-image: var(--n-url-flowers);
-    background-size: 120px auto;
-    background-position: right -14px bottom -10px;
+    background-image: var(--n-url-score);
+    background-size: 190px auto;
 }
 
-#chat .mes[is_system="true"] .mes_block::before {
-    background-image: var(--n-url-news);
-    background-size: 130px auto;
-    background-position: right -20px top -16px;
+/* 翻页箭头挪到卡片左右下角，正文才能左右等距铺满 */
+#chat .mes .swipe_left,
+#chat .mes .swipe_right {
+    position: absolute;
+    z-index: 3;
+    top: auto;
+    bottom: 2px;
+    margin: 0;
+    padding: 2px 6px;
+}
+
+#chat .mes .swipe_left {
+    order: 2;
+    left: 4px;
+}
+
+#chat .mes .swipe_right {
+    order: 4;
+    right: 4px;
+}
+
+/* 页码居中，和两侧箭头凑成一条页脚 */
+#chat .mes .swipes-counter {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -14px;
+    text-align: center;
 }
 
 /* 最后一条消息稍微亮一点，方便在长对话里定位 */
@@ -265,11 +368,9 @@ body::before {
         0 12px 30px -16px rgba(0, 0, 0, 1);
 }
 
-/* 卡片内部内容要压在花纹之上 */
+/* 卡片内部内容要压在花纹之上（箭头的定位在 4b 里，别在这里重设 position） */
 #chat .mes .mes_block,
-#chat .mes .mesAvatarWrapper,
-#chat .mes .swipe_left,
-#chat .mes .swipe_right {
+#chat .mes .mesAvatarWrapper {
     position: relative;
     z-index: 2;
 }
@@ -306,7 +407,7 @@ body::before {
     filter: sepia(0.18) saturate(0.95) contrast(1.02);
 }
 
-/* 头像下方的编号 / 计时 / token 数：档案编号的味道 */
+/* 页眉右侧的编号 / 计时 / token：档案编号的味道，中间用细竖线隔开 */
 #chat .mes .mesIDDisplay,
 #chat .mes .mes_timer,
 #chat .mes .tokenCounterDisplay {
@@ -315,16 +416,22 @@ body::before {
     letter-spacing: 0.06em;
     color: var(--n-ink-faint);
     opacity: 0.85;
+    flex: 0 0 auto;
+    padding: 0 0 0 7px;
+    margin: 0;
+    border-left: 1px solid var(--n-gold-faint);
+    line-height: 1.1;
+    white-space: nowrap;
+    text-shadow: 0 1px 3px var(--n-text-halo);
 }
 
 /* --------------------------------------------------------------------------
-   6. 名字栏：小型标题 + 烫金细线
+   6. 名字栏：标题 + 双线，把页眉和正文分开
    -------------------------------------------------------------------------- */
 #chat .mes .ch_name {
-    padding-bottom: 4px;
-    margin-bottom: 6px;
-    border-bottom: 1px solid var(--n-gold-faint);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+    padding-bottom: 5px;
+    margin-bottom: 8px;
+    border-bottom: 3px double var(--n-gold-soft);
     align-items: baseline;
 }
 
@@ -865,31 +972,30 @@ dialog.popup {
         --n-card-pad: 9px;
         --n-card-gap: 8px;
         --n-ornament: 26px;
+        --n-header-h: 48px;
+        /* 头像缩小，把宽度让给文字 */
+        --avatar-base-width: 40px !important;
+        --avatar-base-height: 40px !important;
     }
 
     #chat {
         padding: 4px var(--n-edge) 2px;
     }
 
+    /* 左右内边距保持一致，正文两侧到屏幕的距离才相等 */
     #chat .mes {
-        padding: var(--n-card-pad) 10px calc(var(--n-card-pad) - 1px);
-        background-size: 110px auto, 100% 100%, 256px 256px;
-    }
-
-    #chat .mes .mes_block {
-        padding-left: 8px;
-    }
-
-    /* 头像缩小，把宽度让给文字 */
-    #chat .mes .avatar {
-        width: 36px;
-        height: 36px;
+        padding: var(--n-card-pad) var(--n-card-pad) calc(var(--n-card-pad) + 10px);
     }
 
     #chat .mes .avatar img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+    }
+
+    /* 页眉装饰在窄屏往里收一点，别把编号盖住 */
+    #chat .mes .mesAvatarWrapper::after {
+        inset: 0 -4px 0 46%;
     }
 
     #chat .mes .mes_text {

@@ -25,6 +25,9 @@
             --topBarBlockSize: 40px;
             --bottomFormBlockSize: 40px;
             --shadowWidth: 2;
+            --mes-right-spacing: 30px;
+            --avatar-base-width: 50px;
+            --avatar-base-height: 50px;
             --animation-duration-2x: 0.2s;
             /* 预览时贴图走相对路径 */
             --n-url-linen: url("../assets/nocturne/tex-linen.jpg");
@@ -108,10 +111,15 @@
             flex: 0 0 auto;
         }
 
+        /* 酒馆会给最后一条消息的头像区垫 50px，主题需要覆盖掉 */
+        .last_mes .mesAvatarWrapper {
+            padding-bottom: var(--avatar-base-height);
+        }
+
         .avatar {
-            width: 44px;
-            height: 44px;
-            flex: 0 0 auto;
+            width: var(--avatar-base-width);
+            height: var(--avatar-base-height);
+            flex: 1;
         }
 
         .avatar img {
@@ -139,6 +147,10 @@
             gap: 8px;
             font-family: serif;
             font-size: 13px;
+        }
+
+        .mes_text {
+            padding-right: var(--mes-right-spacing);
         }
 
         .mes_text p {
@@ -269,7 +281,7 @@
                 </div>
             </div>
 
-            <div class="mes" is_user="false" is_system="true">
+            <div class="mes last_mes" is_user="false" is_system="true">
                 <div class="mesAvatarWrapper">
                     <div class="avatar"><img
                             src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='80' height='80' fill='%232a2320'/></svg>"

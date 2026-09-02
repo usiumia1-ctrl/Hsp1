@@ -123,12 +123,15 @@ def fiber_layer(size, seed, density=0.5, horizontal=True):
 
 
 def make_parchment(size=320, seed=7):
-    """老羊皮纸：暖米色 + 斑驳 + 纤维。"""
-    blotch = seamless_noise(size, 9, seed)
-    grain = seamless_noise(size, 0.8, seed + 1)
-    fib = fiber_layer(size, seed + 2, 0.5, True) + fiber_layer(size, seed + 3, 0.35, False)
-    v = 0.62 * blotch + 0.22 * grain + 0.16 * (fib / 0.85)
-    v = np.clip((v - 0.5) * 1.25 + 0.5, 0, 1)
+    """老羊皮纸：暖米色 + 斑驳 + 纤维。
+
+    斑驳（低频）压得比较轻：低频一重，平铺到宽屏上就会看出一团团云斑。
+    """
+    blotch = seamless_noise(size, 5, seed)
+    grain = seamless_noise(size, 0.7, seed + 1)
+    fib = fiber_layer(size, seed + 2, 0.5, True) + fiber_layer(size, seed + 3, 0.4, False)
+    v = 0.30 * blotch + 0.34 * grain + 0.36 * (fib / 0.9)
+    v = np.clip((v - 0.5) * 1.1 + 0.5, 0, 1)
     light = np.array([226, 209, 178], np.float32)
     dark = np.array([170, 146, 110], np.float32)
     rgb = dark + (light - dark) * v[..., None]
