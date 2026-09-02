@@ -1,0 +1,142 @@
+/* ==========================================================================
+   夜笺 · Nocturne —— 浅羊皮纸配色（可选）
+   用法：在自定义 CSS 里，先贴 nocturne.css，再把这一段贴在它后面。
+   只覆盖颜色与几个和明暗有关的效果，版式 / 花纹 / 手机适配都沿用主文件。
+   ========================================================================== */
+
+:root {
+    /* 墨色：深棕代替象牙白 */
+    --n-ink: #33291f;
+    --n-ink-dim: #6b5b45;
+    --n-ink-faint: #7d6c52;
+
+    /* 烫金换成更深的赭金，浅底上才压得住 */
+    --n-gold: #8a6a2f;
+    --n-gold-soft: rgba(120, 92, 40, 0.45);
+    --n-gold-faint: rgba(120, 92, 40, 0.22);
+    --n-oxblood: #8b3a30;
+
+    /* 纸色 */
+    --n-void: #2a231c;
+    /* 页面底：仍然偏暗，衬托纸张 */
+    --n-card: rgba(232, 219, 192, 0.96);
+    --n-card-user: rgba(240, 230, 206, 0.96);
+    --n-panel: rgba(226, 212, 184, 0.97);
+    --n-bar: rgba(214, 199, 170, 0.97);
+
+    --n-rule: rgba(120, 92, 40, 0.4);
+    --n-rule-strong: rgba(120, 92, 40, 0.68);
+
+    --n-watermark: 0.16;
+
+    --SmartThemeBodyColor: var(--n-ink) !important;
+    --SmartThemeEmColor: var(--n-ink-dim) !important;
+    --SmartThemeQuoteColor: #7a4f1c !important;
+    --SmartThemeShadowColor: rgba(255, 250, 235, 0.6) !important;
+    --SmartThemeChatTintColor: rgba(30, 24, 18, 0.35) !important;
+}
+
+/* 卡片改用羊皮纸纹理，去掉暗色高光 */
+#chat .mes {
+    background-image:
+        radial-gradient(130% 100% at 50% -20%, rgba(120, 92, 40, 0.08), transparent 62%),
+        var(--n-url-parchment);
+    background-size: 100% 100%, 320px 320px;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.5) inset,
+        0 14px 30px -16px rgba(0, 0, 0, 0.9);
+}
+
+#chat .mes[is_user="true"] {
+    background-image:
+        radial-gradient(130% 100% at 50% -20%, rgba(139, 58, 48, 0.10), transparent 62%),
+        var(--n-url-parchment);
+    background-size: 100% 100%, 320px 320px;
+}
+
+#chat .mes[is_system="true"] {
+    background-color: rgba(224, 211, 184, 0.92);
+}
+
+/* 浅底上正文不需要黑色阴影，改成极淡的纸面高光 */
+#chat .mes .mes_text {
+    text-shadow: 0 1px 0 rgba(255, 252, 240, 0.55);
+}
+
+#chat .mes .ch_name .name_text {
+    color: #7a5520;
+    text-shadow: 0 1px 0 rgba(255, 252, 240, 0.6);
+}
+
+#chat .mes[is_user="true"] .ch_name .name_text {
+    color: #8b4a2f;
+}
+
+#chat .mes .mes_text q,
+#chat .mes .mes_text q i,
+#chat .mes .mes_text q em {
+    color: #7b4a13;
+    text-shadow: 0 1px 0 rgba(255, 252, 240, 0.5);
+}
+
+#chat .mes .mes_text strong,
+#chat .mes .mes_text b {
+    color: #2a2118;
+}
+
+#chat .mes .mes_text code,
+#chat .mes .mes_text tt {
+    color: #3f4a38;
+    background: rgba(120, 92, 40, 0.10);
+    border-color: rgba(120, 92, 40, 0.28);
+}
+
+#chat .mes .mes_text pre {
+    background: rgba(120, 92, 40, 0.08);
+}
+
+/* 头像在浅底上不需要那么重的黑框 */
+#chat .mes .avatar {
+    box-shadow:
+        0 0 0 3px rgba(250, 244, 228, 0.9),
+        0 4px 10px -4px rgba(0, 0, 0, 0.55);
+}
+
+#chat .mes .mes_reasoning_details {
+    background: rgba(120, 92, 40, 0.08);
+}
+
+/* 输入栏 / 面板：浅纸 */
+#send_form,
+.drawer-content,
+#left-nav-panel,
+#right-nav-panel,
+#WorldInfo,
+.popup,
+dialog.popup {
+    background-image: var(--n-url-parchment) !important;
+    background-size: 320px 320px !important;
+    color: var(--n-ink) !important;
+}
+
+#send_textarea,
+input[type="text"],
+input[type="number"],
+input[type="search"],
+input[type="password"],
+select,
+textarea,
+.text_pole {
+    background-color: rgba(255, 252, 242, 0.55) !important;
+    color: var(--n-ink) !important;
+}
+
+#top-bar {
+    background-color: rgba(38, 31, 24, 0.95) !important;
+}
+
+/* 页面背景压得更暗，纸张才跳出来 */
+body::before {
+    opacity: 0.5;
+    filter: brightness(0.35) saturate(0.5);
+}

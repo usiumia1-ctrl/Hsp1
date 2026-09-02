@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>夜笺 Nocturne · 主题预览</title>
+
+    <!-- 主题本体 -->
+    <link rel="stylesheet" href="../css/nocturne.css">
+    <!-- 加 ?skin=parchment 就能预览浅羊皮纸配色 -->
+    <script>
+        if (new URLSearchParams(location.search).get('skin') === 'parchment') {
+            document.write('<link rel="stylesheet" href="../css/nocturne-parchment.css">');
+        }
+    </script>
+
+    <style>
+        /* ------------------------------------------------------------------
+           以下是「模拟 SillyTavern 骨架」的样式，只为本地预览用，
+           不属于主题本身。真实酒馆里这些由 public/style.css 提供。
+           ------------------------------------------------------------------ */
+        :root {
+            --mainFontSize: 15px;
+            --topBarBlockSize: 40px;
+            --bottomFormBlockSize: 40px;
+            --shadowWidth: 2;
+            --animation-duration-2x: 0.2s;
+            /* 预览时贴图走相对路径 */
+            --n-url-linen: url("../assets/nocturne/tex-linen.jpg");
+            --n-url-parchment: url("../assets/nocturne/tex-parchment.jpg");
+            --n-url-vignette: url("../assets/nocturne/tex-vignette.png");
+            --n-url-night: url("../assets/nocturne/bg-night-garden.jpg");
+            --n-url-butterfly: url("../assets/nocturne/dec-butterfly-engraved.png");
+            --n-url-moth: url("../assets/nocturne/dec-moth.png");
+            --n-url-flowers: url("../assets/nocturne/dec-flowers.png");
+            --n-url-score: url("../assets/nocturne/dec-score.png");
+            --n-url-news: url("../assets/nocturne/dec-news-scrap.png");
+            --n-url-words: url("../assets/nocturne/dec-words.png");
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+        }
+
+        #top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--topBarBlockSize);
+            z-index: 50;
+        }
+
+        #top-settings-holder {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            height: var(--topBarBlockSize);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 51;
+        }
+
+        #top-settings-holder .drawer-icon {
+            font-size: 20px;
+            font-family: serif;
+        }
+
+        #sheld {
+            position: absolute;
+            top: var(--topBarBlockSize);
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            width: min(100%, var(--sheld-width, 100%));
+            margin: 0 auto;
+        }
+
+        #chat {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mes {
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+            position: relative;
+        }
+
+        .mesAvatarWrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 0 0 auto;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            flex: 0 0 auto;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .mes_block {
+            padding-left: 10px;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .ch_name {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .mes_buttons {
+            display: flex;
+            gap: 8px;
+            font-family: serif;
+            font-size: 13px;
+        }
+
+        .mes_text p {
+            margin: 0 0 .62em;
+        }
+
+        .mes_reasoning_details {
+            display: block;
+        }
+
+        .mes_reasoning_summary {
+            display: flex;
+            cursor: pointer;
+        }
+
+        .swipe_left,
+        .swipe_right {
+            font-family: serif;
+            font-size: 18px;
+            align-self: center;
+        }
+
+        #form_sheld {
+            width: 100%;
+        }
+
+        #send_form {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            gap: 8px;
+            padding: 6px 8px;
+        }
+
+        #send_textarea {
+            flex: 1;
+            resize: none;
+            height: 34px;
+            padding: 6px 8px;
+        }
+
+        #leftSendForm,
+        #rightSendForm {
+            display: flex;
+            gap: 10px;
+            font-family: serif;
+            font-size: 18px;
+        }
+
+        .preview-note {
+            font: italic 12px/1.6 Georgia, serif;
+            color: #7d715b;
+            text-align: center;
+            padding: 4px 0 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="top-bar"></div>
+    <div id="top-settings-holder">
+        <div class="drawer-icon">✦</div>
+        <div class="drawer-icon">✉</div>
+        <div class="drawer-icon">❦</div>
+        <div class="drawer-icon openIcon">✎</div>
+        <div class="drawer-icon">☾</div>
+        <div class="drawer-icon">✧</div>
+    </div>
+
+    <div id="sheld">
+        <div id="chat">
+
+            <div class="mes" is_user="false" is_system="false">
+                <div class="mesAvatarWrapper">
+                    <div class="avatar"><img
+                            src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='80' height='80' fill='%233a2f26'/><circle cx='40' cy='32' r='16' fill='%2385735c'/><path d='M12 78c4-18 14-26 28-26s24 8 28 26z' fill='%2385735c'/></svg>"
+                            alt=""></div>
+                    <div class="mesIDDisplay">#128</div>
+                    <div class="mes_timer">12.4s</div>
+                    <div class="tokenCounterDisplay">846t</div>
+                </div>
+                <div class="swipe_left">‹</div>
+                <div class="mes_block">
+                    <div class="ch_name">
+                        <div><span class="name_text">Ashcombe</span><small class="timestamp">1887年11月4日
+                                23:41</small></div>
+                        <div class="mes_buttons"><span>⋯</span><span>✎</span></div>
+                    </div>
+                    <details class="mes_reasoning_details" open>
+                        <summary class="mes_reasoning_summary">
+                            <div class="mes_reasoning_header_block">
+                                <div class="mes_reasoning_header"><span class="mes_reasoning_header_title">Thought for
+                                        12s</span></div>
+                            </div>
+                        </summary>
+                        <div class="mes_reasoning">她在等一个不会来的答复。信封上的火漆已经裂了三道缝，说明这封信被反复拆开又合上——先写她注意到的物证，再让她开口。</div>
+                    </details>
+                    <div class="mes_text">
+                        <p>壁炉里的火早就灭了，只剩灰烬在铁栅后面偶尔塌陷一次，发出很轻的、像纸被揉皱的声音。她把那封信摊在膝上，指腹沿着折痕来回摩挲，仿佛那道折痕里藏着比字句更要紧的东西。</p>
+                        <p><q>你迟到了十一年。</q>她没有抬头，声音里没有责备，只有一种被时间磨平了棱角的疲倦，<q>而我把每一年都记在这张纸的背面。</q></p>
+                        <p><em>窗外的雾正从河面爬上台阶，煤气灯在雾里散成一团团发黄的光晕。</em>她终于抬起眼睛，那双眼睛在昏暗里显得格外亮——不是希望，更像是终于确认了某件早已知道的事。</p>
+                        <blockquote>「档案编号 087899：主体最后一次被目击于圣马丁巷，随身仅携带一封未拆封的信。」</blockquote>
+                        <p>你注意到她左手无名指上有一圈没有晒黑的浅痕，戒指显然是最近才摘下的。<strong>她注意到你在看。</strong></p>
+                        <hr>
+                        <p>壁炉台上的钟停在三点一刻。整栋房子里，只有它是诚实的。</p>
+                    </div>
+                    <div class="swipes-counter">3 / 4</div>
+                </div>
+                <div class="swipe_right">›</div>
+            </div>
+
+            <div class="mes" is_user="true" is_system="false">
+                <div class="mesAvatarWrapper">
+                    <div class="avatar"><img
+                            src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='80' height='80' fill='%23473028'/><circle cx='40' cy='30' r='15' fill='%239b8468'/><path d='M14 78c4-17 13-25 26-25s22 8 26 25z' fill='%239b8468'/></svg>"
+                            alt=""></div>
+                    <div class="mesIDDisplay">#129</div>
+                </div>
+                <div class="mes_block">
+                    <div class="ch_name">
+                        <div><span class="name_text">你</span><small class="timestamp">1887年11月4日 23:43</small></div>
+                        <div class="mes_buttons"><span>⋯</span><span>✎</span></div>
+                    </div>
+                    <div class="mes_text">
+                        <p>我把手套摘下来，放在钟旁边——那是我唯一还给得起的东西。</p>
+                        <p><q>那就把背面念给我听。</q>我说，<q>从第一年开始。</q></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mes" is_user="false" is_system="true">
+                <div class="mesAvatarWrapper">
+                    <div class="avatar"><img
+                            src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='80' height='80' fill='%232a2320'/></svg>"
+                            alt=""></div>
+                </div>
+                <div class="mes_block">
+                    <div class="ch_name"><span class="name_text">卷宗</span><small class="timestamp">系统</small></div>
+                    <div class="mes_text">
+                        <p>本条记录已归档。后续内容需要更高的查阅权限。</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="form_sheld">
+            <form id="send_form">
+                <div id="leftSendForm"><span>☰</span><span>✧</span></div>
+                <textarea id="send_textarea" placeholder="写下你的回信……"></textarea>
+                <div id="rightSendForm"><span id="send_but">➤</span></div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

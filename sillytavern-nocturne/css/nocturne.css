@@ -1,0 +1,940 @@
+/* ==========================================================================
+   夜笺 · Nocturne  —  SillyTavern 主题美化
+   维多利亚暗黑 / 书信档案卡片风
+   兼容 SillyTavern 1.14.x / 1.15.x（1.16+ 同样可用，DOM 未变）
+   作者笔记：整套皮肤只靠下面「配色与贴图」一段变量驱动，改那一段就能换肤。
+   --------------------------------------------------------------------------
+   使用方法见 README。贴图默认从 /user/images/nocturne/ 读取，
+   即 SillyTavern 目录下 data/default-user/user/images/nocturne/
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. 字体（可选）
+   国内网络访问 Google Fonts 常失败，默认注释掉；能联网就取消注释，
+   标题会变成正统维多利亚衬线体。不开也有本地字体兜底。
+   -------------------------------------------------------------------------- */
+/* @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap'); */
+
+/* --------------------------------------------------------------------------
+   1. 配色与贴图 —— 换肤只改这一段
+   -------------------------------------------------------------------------- */
+:root {
+    /* —— 贴图路径。换成 base64 或别的目录，只改这几行 —— */
+    --n-url-linen: url("/user/images/nocturne/tex-linen.jpg");
+    --n-url-parchment: url("/user/images/nocturne/tex-parchment.jpg");
+    --n-url-vignette: url("/user/images/nocturne/tex-vignette.png");
+    --n-url-night: url("/user/images/nocturne/bg-night-garden.jpg");
+    --n-url-butterfly: url("/user/images/nocturne/dec-butterfly-engraved.png");
+    --n-url-moth: url("/user/images/nocturne/dec-moth.png");
+    --n-url-flowers: url("/user/images/nocturne/dec-flowers.png");
+    --n-url-score: url("/user/images/nocturne/dec-score.png");
+    --n-url-news: url("/user/images/nocturne/dec-news-scrap.png");
+    --n-url-words: url("/user/images/nocturne/dec-words.png");
+
+    /* —— 墨色与纸色 —— */
+    --n-ink: #e6dbc2;
+    /* 正文：旧象牙 */
+    --n-ink-dim: #ab9c7e;
+    /* 次要信息 */
+    --n-ink-faint: #7d715b;
+    /* 时间戳等最弱的一层 */
+    --n-gold: #c9a86a;
+    /* 烫金：分隔线、花纹、名字 */
+    --n-gold-soft: rgba(201, 168, 106, 0.42);
+    --n-gold-faint: rgba(201, 168, 106, 0.18);
+    --n-oxblood: #8c3a34;
+    /* 牛血红：强调、警告、用户侧印记 */
+    --n-verdigris: #6f7f6a;
+    /* 铜绿：引用、代码 */
+
+    /* —— 底色 —— */
+    --n-void: #0a0807;
+    /* 页面最底 */
+    --n-card: rgba(33, 27, 22, 0.97);
+    /* 角色卡片：比底色亮一档，卡片感才立得住 */
+    --n-card-user: rgba(41, 30, 24, 0.97);
+    /* 用户卡片（偏暖一点） */
+    --n-watermark: 0.1;
+    /* 卡片上拼贴水印的浓度，嫌花就调到 0.04，喜欢就调到 0.18 */
+    --n-panel: rgba(18, 15, 13, 0.97);
+    /* 抽屉 / 弹窗 */
+    --n-bar: rgba(14, 12, 10, 0.96);
+    /* 顶栏 / 输入栏 */
+
+    /* —— 线条 —— */
+    --n-rule: rgba(201, 168, 106, 0.34);
+    --n-rule-strong: rgba(201, 168, 106, 0.62);
+    --n-rule-dark: rgba(0, 0, 0, 0.55);
+
+    /* —— 尺寸（手机端会再压缩一轮）—— */
+    --n-card-radius: 3px;
+    --n-card-gap: 10px;
+    --n-card-pad: 12px;
+    --n-edge: 8px;
+    /* 聊天区左右留白：越小字越靠边、可读区越宽 */
+    --n-ornament: 34px;
+    /* 卡片四角花纹尺寸 */
+
+    /* —— 字体栈：英文走衬线，中文走宋体系，手机上都有兜底 —— */
+    --n-font-body: 'EB Garamond', 'Iowan Old Style', Georgia, 'Times New Roman',
+        'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', STSong, SimSun, serif;
+    --n-font-display: 'Cinzel', 'Trajan Pro', 'Optima', Georgia,
+        'Songti SC', 'Noto Serif CJK SC', STZhongsong, serif;
+    --n-font-mono: 'Courier New', 'Courier', 'PT Mono', ui-monospace, monospace;
+
+    /* —— 把 SillyTavern 自己的主题变量也拉过来，保证没装主题预设时也统一 —— */
+    --SmartThemeBodyColor: var(--n-ink) !important;
+    --SmartThemeEmColor: var(--n-ink-dim) !important;
+    --SmartThemeUnderlineColor: var(--n-gold) !important;
+    --SmartThemeQuoteColor: #dcc48e !important;
+    --SmartThemeBorderColor: var(--n-rule) !important;
+    --SmartThemeShadowColor: rgba(0, 0, 0, 0.85) !important;
+    --SmartThemeBlurTintColor: var(--n-panel) !important;
+    --SmartThemeChatTintColor: rgba(10, 9, 8, 0.55) !important;
+    --SmartThemeUserMesBlurTintColor: var(--n-card-user) !important;
+    --SmartThemeBotMesBlurTintColor: var(--n-card) !important;
+    --SmartThemeFastUIBGColor: var(--n-panel) !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. 页面底子：夜色花园 + 暗角
+   -------------------------------------------------------------------------- */
+body {
+    background-color: var(--n-void);
+    color: var(--n-ink);
+    font-family: var(--n-font-body);
+}
+
+/* 没设置背景图时也不至于是纯黑；设了背景图就只做压暗 */
+#bg1,
+#bg_custom {
+    filter: saturate(0.55) brightness(0.42) contrast(1.05) sepia(0.28);
+}
+
+body::before {
+    /* 夜色花园贴图，压得很暗，只做氛围 */
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        var(--n-url-vignette) center / 100% 100% no-repeat,
+        var(--n-url-night) center / cover no-repeat,
+        var(--n-void);
+    opacity: 0.55;
+    filter: brightness(0.5) saturate(0.6);
+}
+
+/* --------------------------------------------------------------------------
+   3. 聊天容器：尽量贴边，把可读宽度让给正文
+   -------------------------------------------------------------------------- */
+#chat {
+    background-color: rgba(10, 9, 8, 0.42) !important;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    padding: 6px var(--n-edge) 4px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--n-gold-soft) transparent;
+}
+
+#chat::-webkit-scrollbar {
+    width: 6px;
+}
+
+#chat::-webkit-scrollbar-thumb {
+    background: var(--n-gold-soft);
+    border-radius: 0;
+}
+
+#chat::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* 顶栏与聊天区之间的一条烫金细线 */
+#sheld {
+    border-top: 1px solid var(--n-gold-faint);
+}
+
+/* --------------------------------------------------------------------------
+   4. 消息卡片：档案卡 / 信笺
+   结构 = 亚麻底纹 + 内外双线 + 四角花纹 + 右下角蝴蝶水印
+   -------------------------------------------------------------------------- */
+#chat .mes {
+    position: relative;
+    margin: 0 0 var(--n-card-gap) 0;
+    padding: var(--n-card-pad) var(--n-card-pad) calc(var(--n-card-pad) - 2px);
+    border: 1px solid var(--n-rule);
+    border-radius: var(--n-card-radius);
+    background-color: var(--n-card);
+    background-image:
+        radial-gradient(130% 100% at 50% -20%, rgba(201, 168, 106, 0.08), transparent 62%),
+        var(--n-url-linen);
+    background-repeat: no-repeat, repeat;
+    background-position: center, center;
+    background-size: 100% 100%, 256px 256px;
+    box-shadow:
+        0 1px 0 rgba(255, 240, 210, 0.06) inset,
+        0 14px 30px -16px rgba(0, 0, 0, 1),
+        0 2px 6px -3px rgba(0, 0, 0, 0.9);
+    color: var(--n-ink);
+}
+
+/* 内框：离外框 4px 的第二道细线，维多利亚双线框 */
+#chat .mes::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid var(--n-gold-faint);
+    border-radius: 1px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 四角花纹：一个元素画四个角，SVG 内联，手机上也不糊 */
+#chat .mes::after {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    pointer-events: none;
+    z-index: 1;
+    background-image:
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><g fill='none' stroke='%23c9a86a' stroke-width='1.15' stroke-linecap='round' opacity='.85'><path d='M2 14V6a4 4 0 0 1 4-4h8'/><path d='M6 20c0-6 2-10 8-11'/><path d='M14 9c-4 0-6 2-6 5s3 4 4 2-1-4-4-3'/><path d='M20 6c-5 0-8 2-9 6'/></g></svg>"),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><g fill='none' stroke='%23c9a86a' stroke-width='1.15' stroke-linecap='round' opacity='.85'><path d='M38 14V6a4 4 0 0 0-4-4h-8'/><path d='M34 20c0-6-2-10-8-11'/><path d='M26 9c4 0 6 2 6 5s-3 4-4 2 1-4 4-3'/><path d='M20 6c5 0 8 2 9 6'/></g></svg>"),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><g fill='none' stroke='%23c9a86a' stroke-width='1.15' stroke-linecap='round' opacity='.85'><path d='M2 26v8a4 4 0 0 0 4 4h8'/><path d='M6 20c0 6 2 10 8 11'/><path d='M14 31c-4 0-6-2-6-5s3-4 4-2-1 4-4 3'/></g></svg>"),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><g fill='none' stroke='%23c9a86a' stroke-width='1.15' stroke-linecap='round' opacity='.85'><path d='M38 26v8a4 4 0 0 1-4 4h-8'/><path d='M34 20c0 6-2 10-8 11'/><path d='M26 31c4 0 6-2 6-5s-3-4-4-2 1 4 4 3'/></g></svg>");
+    background-repeat: no-repeat;
+    background-position: left top, right top, left bottom, right bottom;
+    background-size: var(--n-ornament) var(--n-ornament);
+    opacity: 0.7;
+}
+
+/* 用户消息：偏暖的信纸，右下角换成花枝水印，左侧加一条牛血红书脊 */
+#chat .mes[is_user="true"] {
+    background-color: var(--n-card-user);
+    background-image:
+        radial-gradient(130% 100% at 50% -20%, rgba(140, 58, 52, 0.12), transparent 62%),
+        var(--n-url-linen);
+    border-left: 3px double var(--n-oxblood);
+}
+
+/* 系统消息 / 旁白：压低存在感的一张薄纸 */
+#chat .mes[is_system="true"] {
+    background-color: rgba(20, 17, 14, 0.9);
+    opacity: 0.78;
+    font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   4b. 拼贴水印层
+   贴在正文底下、卡片纹理之上；浓度统一由 --n-watermark 控制。
+   放在 .mes_block 的伪元素里（z-index:-1），所以永远压不到文字。
+   -------------------------------------------------------------------------- */
+#chat .mes .mes_block::before {
+    content: "";
+    position: absolute;
+    /* 用 inset:0 而不是负值：.mes_block 在酒馆里是 overflow:clip 的，
+       出血靠 background-position 的负偏移实现，不会被裁掉整层 */
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: var(--n-watermark);
+    background-image: var(--n-url-butterfly);
+    background-repeat: no-repeat;
+    background-position: right -18px bottom -14px;
+    background-size: 150px auto;
+}
+
+#chat .mes[is_user="true"] .mes_block::before {
+    background-image: var(--n-url-flowers);
+    background-size: 120px auto;
+    background-position: right -14px bottom -10px;
+}
+
+#chat .mes[is_system="true"] .mes_block::before {
+    background-image: var(--n-url-news);
+    background-size: 130px auto;
+    background-position: right -20px top -16px;
+}
+
+/* 最后一条消息稍微亮一点，方便在长对话里定位 */
+#chat .last_mes {
+    border-color: var(--n-rule-strong);
+    box-shadow:
+        0 0 0 1px rgba(201, 168, 106, 0.10),
+        0 12px 30px -16px rgba(0, 0, 0, 1);
+}
+
+/* 卡片内部内容要压在花纹之上 */
+#chat .mes .mes_block,
+#chat .mes .mesAvatarWrapper,
+#chat .mes .swipe_left,
+#chat .mes .swipe_right {
+    position: relative;
+    z-index: 2;
+}
+
+/* --------------------------------------------------------------------------
+   5. 头像：泛黄的旧照片，钉在卡片左上
+   -------------------------------------------------------------------------- */
+#chat .mes .avatar {
+    border-radius: 2px;
+    border: 1px solid var(--n-gold-soft);
+    box-shadow:
+        0 0 0 3px rgba(20, 16, 13, 0.9),
+        0 4px 10px -4px rgba(0, 0, 0, 0.9);
+    overflow: hidden;
+    transform: rotate(-1.2deg);
+    transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+#chat .mes[is_user="true"] .avatar {
+    transform: rotate(1.2deg);
+    border-color: rgba(140, 58, 52, 0.55);
+}
+
+#chat .mes .avatar img {
+    filter: sepia(0.42) saturate(0.75) contrast(1.06) brightness(0.94);
+    border-radius: 0;
+}
+
+#chat .mes:hover .avatar {
+    transform: rotate(0deg);
+}
+
+#chat .mes:hover .avatar img {
+    filter: sepia(0.18) saturate(0.95) contrast(1.02);
+}
+
+/* 头像下方的编号 / 计时 / token 数：档案编号的味道 */
+#chat .mes .mesIDDisplay,
+#chat .mes .mes_timer,
+#chat .mes .tokenCounterDisplay {
+    font-family: var(--n-font-mono);
+    font-size: calc(var(--mainFontSize) * 0.62);
+    letter-spacing: 0.06em;
+    color: var(--n-ink-faint);
+    opacity: 0.85;
+}
+
+/* --------------------------------------------------------------------------
+   6. 名字栏：小型标题 + 烫金细线
+   -------------------------------------------------------------------------- */
+#chat .mes .ch_name {
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--n-gold-faint);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+    align-items: baseline;
+}
+
+#chat .mes .ch_name .name_text {
+    font-family: var(--n-font-display);
+    font-size: calc(var(--mainFontSize) * 1.02);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--n-gold);
+    text-transform: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+#chat .mes[is_user="true"] .ch_name .name_text {
+    color: #d8b98a;
+}
+
+#chat .mes .ch_name .timestamp,
+#chat .mes .ch_name small {
+    font-family: var(--n-font-mono);
+    font-size: calc(var(--mainFontSize) * 0.62);
+    letter-spacing: 0.05em;
+    color: var(--n-ink-faint);
+    font-style: italic;
+    margin-left: 8px;
+}
+
+/* 消息按钮：平时藏起来，别抢正文的位置 */
+#chat .mes .mes_buttons .mes_button,
+#chat .mes .mes_edit_buttons .menu_button {
+    color: var(--n-ink-faint);
+    opacity: 0.55;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+#chat .mes .mes_buttons .mes_button:hover,
+#chat .mes .mes_edit_buttons .menu_button:hover {
+    color: var(--n-gold);
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(201, 168, 106, 0.45);
+}
+
+/* --------------------------------------------------------------------------
+   7. 正文排版：这是主题的核心，尽量多字、好读
+   -------------------------------------------------------------------------- */
+#chat .mes .mes_text {
+    font-family: var(--n-font-body);
+    font-size: var(--mainFontSize);
+    line-height: 1.78;
+    letter-spacing: 0.012em;
+    color: var(--n-ink);
+    text-align: justify;
+    text-justify: inter-ideograph;
+    hyphens: auto;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    padding-top: 2px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
+}
+
+#chat .mes .mes_text p {
+    margin: 0 0 0.62em 0;
+}
+
+#chat .mes .mes_text p:last-child {
+    margin-bottom: 0;
+}
+
+/* 引号内的台词：烫金，微微加亮，方便一眼分出对白 */
+#chat .mes .mes_text q,
+#chat .mes .mes_text q i,
+#chat .mes .mes_text q em {
+    color: #e3c68d;
+    font-style: normal;
+    quotes: "“" "”" "‘" "’";
+    text-shadow: 0 0 10px rgba(201, 168, 106, 0.18), 0 1px 1px rgba(0, 0, 0, 0.8);
+}
+
+/* 斜体（动作 / 心理）：淡一档的旧墨色 */
+#chat .mes .mes_text em,
+#chat .mes .mes_text i {
+    color: var(--n-ink-dim);
+    font-style: italic;
+}
+
+#chat .mes .mes_text strong,
+#chat .mes .mes_text b {
+    color: #f0e6cf;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+#chat .mes .mes_text u {
+    text-decoration-color: var(--n-gold-soft);
+    text-underline-offset: 3px;
+}
+
+/* 引用块：档案摘录，左边双线 + 羊皮纸底 */
+#chat .mes .mes_text blockquote {
+    margin: 0.7em 0;
+    padding: 0.55em 0.9em;
+    border: none;
+    border-left: 3px double var(--n-gold-soft);
+    background: linear-gradient(90deg, rgba(201, 168, 106, 0.07), transparent 70%);
+    color: var(--n-ink-dim);
+    font-style: italic;
+}
+
+/* 小标题：加一条上下细线，像卷宗分节 */
+#chat .mes .mes_text h1,
+#chat .mes .mes_text h2,
+#chat .mes .mes_text h3,
+#chat .mes .mes_text h4 {
+    font-family: var(--n-font-display);
+    color: var(--n-gold);
+    letter-spacing: 0.12em;
+    font-weight: 600;
+    margin: 0.8em 0 0.45em;
+    padding-bottom: 0.25em;
+    border-bottom: 1px solid var(--n-gold-faint);
+}
+
+#chat .mes .mes_text h1 {
+    font-size: calc(var(--mainFontSize) * 1.28);
+}
+
+#chat .mes .mes_text h2 {
+    font-size: calc(var(--mainFontSize) * 1.16);
+}
+
+#chat .mes .mes_text h3,
+#chat .mes .mes_text h4 {
+    font-size: calc(var(--mainFontSize) * 1.06);
+}
+
+/* 分隔线：中间一枚菱形的旧书分节符 */
+#chat .mes .mes_text hr {
+    border: none;
+    height: 12px;
+    margin: 0.9em 0;
+    background:
+        linear-gradient(var(--n-gold-soft), var(--n-gold-soft)) left center / 42% 1px no-repeat,
+        linear-gradient(var(--n-gold-soft), var(--n-gold-soft)) right center / 42% 1px no-repeat,
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 12'><g fill='none' stroke='%23c9a86a' stroke-width='1'><path d='M12 2l4 4-4 4-4-4z'/><path d='M6 6h-2M20 6h-2'/></g></svg>") center / 24px 12px no-repeat;
+}
+
+#chat .mes .mes_text code,
+#chat .mes .mes_text tt {
+    font-family: var(--n-font-mono);
+    font-size: 0.92em;
+    color: #cfd8c4;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(111, 127, 106, 0.35);
+    border-radius: 2px;
+    padding: 0 4px;
+}
+
+#chat .mes .mes_text pre {
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid var(--n-gold-faint);
+    border-left: 3px solid rgba(111, 127, 106, 0.5);
+    border-radius: 2px;
+    padding: 0.7em 0.85em;
+}
+
+#chat .mes .mes_text pre code {
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
+#chat .mes .mes_text table {
+    border-collapse: collapse;
+    border: 1px solid var(--n-gold-faint);
+}
+
+#chat .mes .mes_text th,
+#chat .mes .mes_text td {
+    border: 1px solid var(--n-gold-faint);
+    padding: 4px 8px;
+}
+
+#chat .mes .mes_text th {
+    background: rgba(201, 168, 106, 0.10);
+    color: var(--n-gold);
+    font-family: var(--n-font-display);
+    letter-spacing: 0.08em;
+}
+
+#chat .mes .mes_text img:not(.mes_img) {
+    border: 1px solid var(--n-gold-faint);
+    filter: sepia(0.25) saturate(0.9);
+}
+
+/* 编辑态：真的在信纸上写字 */
+#chat .mes .edit_textarea {
+    background: rgba(0, 0, 0, 0.5) !important;
+    border: 1px dashed var(--n-gold-soft) !important;
+    border-radius: 2px;
+    color: var(--n-ink) !important;
+    font-family: var(--n-font-body);
+    line-height: 1.7;
+}
+
+/* --------------------------------------------------------------------------
+   8. 思维链 / reasoning：夹在卷宗里的一张便笺
+   -------------------------------------------------------------------------- */
+#chat .mes .mes_reasoning_details {
+    position: relative;
+    margin: 2px 0 8px;
+    border: 1px solid var(--n-gold-faint);
+    border-left: 2px solid var(--n-gold-soft);
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+/* 便笺右侧压一段很淡的乐谱，纯氛围 */
+#chat .mes .mes_reasoning_details::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: calc(var(--n-watermark) * 0.7);
+    background: var(--n-url-score) right center / 200px auto no-repeat;
+}
+
+#chat .mes .mes_reasoning_summary {
+    padding: 3px 8px;
+}
+
+#chat .mes .mes_reasoning_header_title {
+    font-family: var(--n-font-display);
+    font-size: calc(var(--mainFontSize) * 0.72);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--n-ink-faint);
+}
+
+#chat .mes .mes_reasoning {
+    padding: 4px 10px 8px;
+    font-family: var(--n-font-body);
+    font-size: calc(var(--mainFontSize) * 0.92);
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--n-ink-dim);
+}
+
+/* --------------------------------------------------------------------------
+   9. 左右滑动（swipe）：两枚烫金的翻页箭头
+   -------------------------------------------------------------------------- */
+#chat .mes .swipe_left,
+#chat .mes .swipe_right {
+    color: var(--n-gold);
+    opacity: 0.42;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9));
+    transition: opacity 0.2s ease;
+}
+
+#chat .mes .swipe_left:hover,
+#chat .mes .swipe_right:hover {
+    opacity: 1;
+}
+
+#chat .mes .swipes-counter {
+    font-family: var(--n-font-mono);
+    font-size: calc(var(--mainFontSize) * 0.66);
+    letter-spacing: 0.08em;
+    color: var(--n-ink-faint);
+}
+
+/* --------------------------------------------------------------------------
+   10. 底部输入栏：写字台
+   -------------------------------------------------------------------------- */
+#send_form {
+    border: 1px solid var(--n-rule) !important;
+    border-radius: 3px 3px 0 0;
+    background-color: var(--n-bar) !important;
+    background-image:
+        linear-gradient(rgba(201, 168, 106, 0.05), transparent 42%),
+        var(--n-url-linen);
+    background-size: auto, 256px 256px;
+    box-shadow: 0 -8px 24px -16px rgba(0, 0, 0, 1);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+#send_textarea {
+    background: transparent !important;
+    border: none !important;
+    color: var(--n-ink) !important;
+    font-family: var(--n-font-body);
+    font-size: var(--mainFontSize);
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+}
+
+#send_textarea::placeholder {
+    color: var(--n-ink-faint);
+    font-style: italic;
+    letter-spacing: 0.08em;
+}
+
+#send_but,
+#mes_stop,
+#mes_continue,
+#options_button,
+#extensionsMenuButton,
+#leftSendForm>div,
+#rightSendForm>div {
+    color: var(--n-gold) !important;
+}
+
+#send_but:hover,
+#mes_continue:hover,
+#options_button:hover,
+#extensionsMenuButton:hover {
+    filter: drop-shadow(0 0 6px rgba(201, 168, 106, 0.55));
+}
+
+/* --------------------------------------------------------------------------
+   11. 顶栏与抽屉面板
+   -------------------------------------------------------------------------- */
+#top-bar {
+    background-color: var(--n-bar) !important;
+    border-bottom: 1px solid var(--n-gold-faint);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+#top-settings-holder .drawer-icon,
+#top-settings-holder .fa-solid,
+#top-settings-holder .fa-regular {
+    color: var(--n-ink-dim);
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+#top-settings-holder .drawer-icon:hover,
+#top-settings-holder .drawer-icon.openIcon {
+    color: var(--n-gold);
+    text-shadow: 0 0 10px rgba(201, 168, 106, 0.5);
+}
+
+.drawer-content,
+#left-nav-panel,
+#right-nav-panel,
+#WorldInfo,
+#floatingPrompt,
+#cfgConfig,
+#logprobsViewer {
+    background-color: var(--n-panel) !important;
+    background-image: var(--n-url-linen);
+    background-size: 256px 256px;
+    border: 1px solid var(--n-rule) !important;
+    border-radius: 3px;
+    color: var(--n-ink);
+    box-shadow: 0 18px 50px -22px rgba(0, 0, 0, 1);
+}
+
+.drawer-content h3,
+.drawer-content h4,
+.inline-drawer-header,
+.inline-drawer-toggle {
+    font-family: var(--n-font-display);
+    letter-spacing: 0.08em;
+    color: var(--n-gold);
+}
+
+.inline-drawer-toggle {
+    border-bottom: 1px solid var(--n-gold-faint);
+}
+
+/* 面板里的普通文字别跟着变金色 */
+.drawer-content,
+.drawer-content span,
+.drawer-content label,
+.drawer-content small,
+.drawer-content p {
+    color: var(--n-ink);
+}
+
+/* --------------------------------------------------------------------------
+   12. 控件：黄铜按钮、暗色输入框
+   -------------------------------------------------------------------------- */
+.menu_button,
+.menu_button_icon {
+    background: linear-gradient(180deg, rgba(201, 168, 106, 0.16), rgba(201, 168, 106, 0.05));
+    border: 1px solid var(--n-gold-soft) !important;
+    border-radius: 2px;
+    color: var(--n-ink) !important;
+    font-family: var(--n-font-display);
+    letter-spacing: 0.06em;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.menu_button:hover,
+.menu_button_icon:hover {
+    background: linear-gradient(180deg, rgba(201, 168, 106, 0.32), rgba(201, 168, 106, 0.12));
+    color: #fff3dc !important;
+}
+
+.menu_button.redWarningBG,
+.menu_button.redOverlayGlow {
+    border-color: rgba(140, 58, 52, 0.8) !important;
+    color: #f0c9c4 !important;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="search"],
+input[type="password"],
+select,
+textarea,
+.text_pole,
+.select2-container .select2-selection {
+    background-color: rgba(0, 0, 0, 0.45) !important;
+    border: 1px solid var(--n-gold-faint) !important;
+    border-radius: 2px !important;
+    color: var(--n-ink) !important;
+    font-family: var(--n-font-body);
+}
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus,
+.text_pole:focus {
+    border-color: var(--n-gold-soft) !important;
+    box-shadow: 0 0 0 1px var(--n-gold-faint) inset;
+    outline: none;
+}
+
+input[type="range"] {
+    accent-color: var(--n-gold);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: var(--n-gold);
+}
+
+/* 弹窗 */
+.popup,
+dialog.popup {
+    background-color: var(--n-panel) !important;
+    background-image:
+        var(--n-url-vignette),
+        var(--n-url-linen);
+    background-size: 100% 100%, 256px 256px;
+    border: 1px solid var(--n-rule) !important;
+    border-radius: 3px;
+    color: var(--n-ink) !important;
+    box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 1);
+}
+
+.popup .popup-header,
+.popup h3 {
+    font-family: var(--n-font-display);
+    letter-spacing: 0.1em;
+    color: var(--n-gold);
+}
+
+/* 角色列表 */
+.character_select,
+.group_select,
+.bogus_folder_select {
+    border-bottom: 1px solid var(--n-gold-faint);
+    transition: background 0.2s ease;
+}
+
+.character_select:hover,
+.group_select:hover,
+.bogus_folder_select:hover {
+    background: rgba(201, 168, 106, 0.08);
+}
+
+.character_select .ch_name,
+.group_select .ch_name {
+    font-family: var(--n-font-display);
+    letter-spacing: 0.06em;
+    color: var(--n-ink);
+}
+
+.avatar_collage,
+#rm_print_characters_block .avatar {
+    border: 1px solid var(--n-gold-faint);
+    border-radius: 2px;
+}
+
+#rm_print_characters_block .avatar img {
+    filter: sepia(0.35) saturate(0.8);
+}
+
+/* 标签 */
+.tag {
+    background: rgba(201, 168, 106, 0.12) !important;
+    border: 1px solid var(--n-gold-faint) !important;
+    border-radius: 2px !important;
+    color: var(--n-ink-dim) !important;
+    font-family: var(--n-font-body);
+    letter-spacing: 0.04em;
+}
+
+/* 全局滚动条 */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--n-gold-soft) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--n-gold-soft);
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.25);
+}
+
+/* 提示条 */
+.toast {
+    background-color: var(--n-panel) !important;
+    border: 1px solid var(--n-gold-soft) !important;
+    border-radius: 2px !important;
+    color: var(--n-ink) !important;
+    font-family: var(--n-font-body);
+}
+
+/* --------------------------------------------------------------------------
+   13. 手机端：卡片贴边、留白压缩、点击区放大
+   1000px 是 SillyTavern 自己的移动断点，跟着它走最省事
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 1000px) {
+    :root {
+        --n-edge: 3px;
+        /* 几乎贴屏幕边，正文宽度最大化 */
+        --n-card-pad: 9px;
+        --n-card-gap: 8px;
+        --n-ornament: 26px;
+    }
+
+    #chat {
+        padding: 4px var(--n-edge) 2px;
+    }
+
+    #chat .mes {
+        padding: var(--n-card-pad) 10px calc(var(--n-card-pad) - 1px);
+        background-size: 110px auto, 100% 100%, 256px 256px;
+    }
+
+    #chat .mes .mes_block {
+        padding-left: 8px;
+    }
+
+    /* 头像缩小，把宽度让给文字 */
+    #chat .mes .avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    #chat .mes .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    #chat .mes .mes_text {
+        line-height: 1.72;
+        text-align: left;
+        /* 窄屏两端对齐容易出大空隙，改左对齐更好读 */
+    }
+
+    /* 滑动箭头在手机上要够大好点 */
+    #chat .mes .swipe_left,
+    #chat .mes .swipe_right {
+        opacity: 0.6;
+        padding: 6px;
+    }
+
+    /* 刘海屏 / 底部手势条 */
+    #send_form {
+        padding-bottom: max(env(safe-area-inset-bottom, 0px), 2px);
+    }
+
+    body::before {
+        opacity: 0.42;
+    }
+}
+
+/* 超窄屏（小屏手机）再收一档 */
+@media screen and (max-width: 420px) {
+    :root {
+        --n-edge: 2px;
+        --n-card-pad: 8px;
+        --n-ornament: 22px;
+    }
+
+    #chat .mes .ch_name .timestamp,
+    #chat .mes .ch_name small {
+        margin-left: 5px;
+    }
+}
+
+/* 尊重系统的“减少动态效果” */
+@media (prefers-reduced-motion: reduce) {
+
+    #chat .mes .avatar,
+    #chat .mes .avatar img {
+        transition: none;
+        transform: none;
+    }
+}
