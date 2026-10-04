@@ -1,0 +1,152 @@
+/* ========== 正文 / 名字打码 ========== */
+
+.sm-mask {
+    user-select: none;
+}
+
+/* 黑条：保留原文宽度，文字透明 */
+.sm-mask.sm-bar {
+    background: var(--sm-bar-color, #111);
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: none !important;
+    border-radius: 2px;
+    padding: 0 1px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+.sm-mask.sm-bar * {
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: none !important;
+}
+
+/* 模糊 */
+.sm-mask.sm-blur {
+    display: inline-block;
+    filter: blur(var(--sm-blur, 6px));
+}
+
+/* 代号替换 */
+.sm-mask.sm-alias {
+    /* 不加样式，读起来自然 */
+}
+
+/* 贴纸 */
+.sm-mask.sm-sticker {
+    display: inline-block;
+    height: 1.3em;
+    line-height: 1.3em;
+    vertical-align: -0.3em;
+    min-width: 1.3em;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: none !important;
+    background-repeat: round no-repeat;
+    background-size: auto 100%;
+    background-position: left center;
+}
+
+/* 单个贴纸：替换整个名字，呈方形 */
+.sm-mask.sm-sticker.sm-sticker-single {
+    width: 1.4em;
+    min-width: 1.4em;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+/* ========== 头像 ========== */
+
+body.sm-active.sm-avatar-blur #chat .mes .avatar img {
+    filter: blur(var(--sm-avatar-blur, 8px));
+}
+
+body.sm-active.sm-avatar-sticker #chat .mes .avatar {
+    position: relative;
+}
+
+body.sm-active.sm-avatar-sticker #chat .mes .avatar img {
+    opacity: 0;
+}
+
+body.sm-active.sm-avatar-sticker #chat .mes .avatar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--sm-sticker-0);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    pointer-events: none;
+}
+
+/* ========== 设置面板 ========== */
+
+#sm_settings .sm-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin: 6px 0;
+}
+
+#sm_settings .sm-row > label.sm-label {
+    min-width: 6em;
+}
+
+#sm_settings textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 4px 0 8px;
+    min-height: 4.5em;
+    font-family: inherit;
+}
+
+#sm_settings .sm-hint {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
+
+#sm_settings .sm-stickers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 6px 0;
+}
+
+#sm_settings .sm-sticker-item {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--SmartThemeBorderColor, #555);
+    border-radius: 6px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#sm_settings .sm-sticker-item .sm-sticker-del {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    border-radius: 50%;
+    background: #c33;
+    color: #fff;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+#sm_settings .sm-sticker-upload {
+    display: none;
+}
+
+#sm_menu_toggle.sm-on .fa-solid {
+    color: var(--active, #4caf50);
+}
